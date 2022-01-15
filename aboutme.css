@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+	padding: 0;
+    box-sizing: border-box;
+    color: white;
+    font-family: 'Sora', sans-serif;
+}
+
+body
+{
+    margin: 0;
+    padding: 0;
+
+    background: linear-gradient(to top,#37274d,#1b1f31) fixed;
+}
+
+.wrapper
+{
+    margin: auto;
+    position: relative;
+    width: 100%;
+    overflow: auto;
+    background: none;
+    
+}
+
+.navbar
+{
+    position: fixed;
+    margin-top: 20px;
+    background: none;
+    right: 5%;
+    z-index: 1;
+    opacity: 0;
+    animation: slideInRight 1s forwards;
+}
+
+.navbar ul
+{
+    display: flex;
+    justify-content: space-around;
+    list-style-type: none;
+    width: 100%;
+    height: 100%;
+    margin-top: 5px;
+}
+
+.navbar ul li 
+{
+    padding-right: 50px;
+}
+
+.navbar ul li a
+{
+    display: block;
+    padding: 3pt 5pt;
+    width: 100%;
+    text-decoration: none;
+
+    color: white;
+
+	border: 2px solid white;
+	border-radius: 8px;
+    
+}
+
+.navbar ul li a:hover
+{
+    background-color: white;
+	color: #161322;
+    transition: 0.2s;
+}
+
+.content
+{
+    display: block;
+    font-weight: 200;
+    width: 100%;
+    height: 80%;
+    margin-top: 50px;
+    flex-wrap: wrap;
+}
+
+.content-wrapper
+{
+    width: 60%;
+    height: 90%;
+    margin: auto;
+    margin-top: 150px;
+    
+}
+
+#about
+{
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    margin-top: 100px;
+    font-size: 16pt;
+
+
+    opacity: 0;
+	animation: fadeUp 1s forwards;
+    
+}
+
+#links
+{
+    width: 30%;
+    height: 10%;
+    margin: auto;
+    margin-top: 50px;
+    opacity: 0;
+	animation: fadeUp 1s forwards;
+    animation-delay: 0.5s;
+}
+
+#links a .fab
+{
+    margin-left: 20px;
+	font-size: 50px;
+	width: 50px;
+    padding:  0px 100px
+}
+
+#links a
+{
+	color: white;
+	width: 30px;
+	border-radius: 50px;
+}
+
+.fa-youtube:hover
+{
+	color: #eb4d4d;
+	transition: .3s;
+}
+
+.fa-google-play:hover
+{
+	color: #44d178;
+	transition: .3s;
+}
+
+@keyframes fadeUp {
+	0%{transform: translateY(50px);}
+	100%{opacity: 1; transform: translateY(0px);}
+}
+
+@keyframes slideInRight
+{
+    0%{transform: translateX(100px);}
+	100%{opacity: 1; transform: translateY(0px);}
+}
