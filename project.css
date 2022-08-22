@@ -131,26 +131,32 @@ section
     height: 100vh;
 }
 
-#pixel
+#abandon
 {
     background: linear-gradient(#2b5a5a,#3a3455);
     height: 100vh;
 }
-#runner
+
+#pixel
 {
     background: linear-gradient(#3a3455,#80474f);
     height: 100vh;
 }
-
-#time
+#runner
 {
     background: linear-gradient(#80474f,#401143);
     height: 100vh;
 }
 
-#control
+#time
 {
     background: linear-gradient(#401143,#200f3f);
+    height: 100vh;
+}
+
+#control
+{
+    background: linear-gradient(#200f3f,#401143);
     height: 100vh;
 }
 
