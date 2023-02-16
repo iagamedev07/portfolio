@@ -153,6 +153,12 @@ body
     transition: .3s;
 }
 
+.fa-linkedin:hover
+{
+    color: #2e6fc4;
+    transition: .3s;
+}
+
 @keyframes fadeUp {
 	0%{transform: translateY(50px);}
 	100%{opacity: 1; transform: translateY(0px);}
