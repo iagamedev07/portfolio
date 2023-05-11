@@ -137,26 +137,32 @@ section
     height: 100vh;
 }
 
-#pixel
+#hogwarts
 {
     background: linear-gradient(#3a3455,#80474f);
     height: 100vh;
 }
-#runner
+
+#pixel
 {
     background: linear-gradient(#80474f,#401143);
     height: 100vh;
 }
-
-#time
+#runner
 {
     background: linear-gradient(#401143,#200f3f);
     height: 100vh;
 }
 
-#control
+#time
 {
     background: linear-gradient(#200f3f,#401143);
+    height: 100vh;
+}
+
+#control
+{
+    background: linear-gradient(#401143,#80474f);
     height: 100vh;
 }
 
@@ -258,12 +264,12 @@ section
     margin-top: 30px;
 }
 
-#stick .projectdesc h3, #monke .projectdesc h3
+#stick .projectdesc h3, #monke .projectdesc h3, #hogwarts .projectdesc h3
 {
     margin-bottom: -30px;
 }
 
-#stick .projectdesc h2, #monke .projectdesc h2
+#stick .projectdesc h2, #monke .projectdesc h2, #hogwarts .projectdesc h2
 {
     margin-bottom: 30px;
 }
@@ -272,6 +278,7 @@ section
 {
     margin-top: 10px;
 }
+
 
 #time .projectmedia, #control .projectmedia
 {
