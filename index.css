@@ -149,6 +149,52 @@ body
 	animation-delay: 2.3s;
 }
 
+.CareerInfo
+{
+	width: 40%;
+	margin: auto;
+	font-family: 'Sora', sans-serif;
+	font-weight: 300;
+	font-size: 2vh;
+	padding-top: 1pc;
+	text-align: center;
+	opacity: 0;
+	animation: fadeUp 1s forwards;
+	animation-delay: 2.2s;
+}
+
+.CareerInfo ul
+{
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.CareerInfo ul li a
+{
+	display: inline-block;
+	text-decoration: none;
+	color: white;
+
+	border: 2px solid white;
+	border-radius: 10px;
+	padding: 4pt 5pt;
+	font-size: 28px;
+	cursor: pointer;
+}
+
+
+.CareerInfo ul li a:hover
+{
+	background-color: white;
+	color: #161322;
+	transition: all 0.3s ease;
+}
+
 .Menu ul
 {
 	margin: 0;
@@ -173,26 +219,6 @@ body
 	padding: 4pt 5pt;
 }
 
-.PortfolioReel
-{
-	padding-top: 1pc;
-	opacity: 0;
-	animation: fadeUp 1s forwards;
-	animation-delay: 2.2s;
-}
-
-.PortfolioReel a
-{
-	display: inline-block;
-	text-decoration: none;
-	color: white;
-
-	border: 2px solid white;
-	border-radius: 10px;
-	padding: 4pt 5pt;
-	font-size: 28px;
-	cursor: pointer;
-}
 
 
 .Menu ul li a:hover
@@ -202,12 +228,6 @@ body
 	transition: 0.3s;
 }
 
-.PortfolioReel a:hover
-{
-	background-color: white;
-	color: #161322;
-	transition: all 0.3s ease;
-}
 
 @keyframes fadeUp {
 	0%{transform: translateY(50px);}
