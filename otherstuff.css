@@ -3,7 +3,34 @@
 	padding: 0;
     box-sizing: border-box;
     color: white;
-    font-family: 'Sora', sans-serif;
+    font-family: 'Merel', sans-serif;
+}
+
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel\ Light.otf);
+    font-weight: 100;
+    font-style: normal; 
+}
+
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel\ Bold.otf);
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel.otf);
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel\ Medium.otf);
+    font-weight: 500;
+    font-style: normal;
 }
 
 body
@@ -11,7 +38,7 @@ body
     margin: 0;
     padding: 0;
 
-    background: linear-gradient(to top,#37274d,#1b1f31) fixed;
+    background-color: #1e1d23;
 }
 
 #tsparticles

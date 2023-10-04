@@ -3,10 +3,34 @@
 	padding: 0;
     box-sizing: border-box;
     color: white;
-    font-family: 'Sora', sans-serif;
+    font-family: 'Merel', sans-serif;
+}
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel\ Light.otf);
+    font-weight: 100;
+    font-style: normal; 
 }
 
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel\ Bold.otf);
+    font-weight: bold;
+    font-style: normal;
+}
 
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel.otf);
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Merel";
+    src: url(fonts/Merel\ Medium.otf);
+    font-weight: 500;
+    font-style: normal;
+}
 
 body
 {
@@ -16,7 +40,7 @@ body
     transition: background-color 1s ease;
     overflow-y: hidden;
 
-    
+    background-color: #1e1d23;    
 }
 
 #tsparticles
@@ -86,6 +110,7 @@ body
 .content
 {
     overflow-y: auto;
+    overflow-x: hidden;
     scroll-snap-type: y mandatory;   
     height: 100vh;
 }
@@ -109,61 +134,61 @@ section
 
 #one
 {
-    background: linear-gradient(#1b1f31,#37274d);
-    height: 100vh;
+    background: radial-gradient(ellipse at 72% 50%, rgba(30,29,35,0.7) 0%, rgba(30,29,35,1) 80%), url(Wallpapers/starballz-wallpaper.png) no-repeat center top fixed;
+    background-size: cover;
 }
 
 #two
 {
-    background: linear-gradient(#37274d,#554666);
-    height: 100vh;
+    height: 101vh;
+    background: radial-gradient(ellipse at 72% 50%, rgba(30,29,35,0.85) 0%, rgba(30,29,35,1) 60%), url(Wallpapers/bullyus-wallpaper.png) no-repeat top center;
 }
 
 #stick
 {
-    background: linear-gradient(#554666,#505377);
     height: 100vh;
+    background: radial-gradient(ellipse at 72% 50%, rgba(30,29,35,0.8) 0%, rgba(30,29,35,1) 60%), url(Wallpapers/stick-wallpaper.png) no-repeat top center;
 }
 
 #monke
 {
-    background: linear-gradient(#505377,#2b5a5a);
     height: 100vh;
+    background: radial-gradient(ellipse at 65% 50%, rgba(30,29,35,0.7) 0%, rgba(30,29,35,1) 70%), url(Wallpapers/monke-wallpaper.png) no-repeat top center;
 }
 
 #abandon
 {
-    background: linear-gradient(#2b5a5a,#3a3455);
     height: 100vh;
+    background: radial-gradient(ellipse at 72% 50%, rgba(30,29,35,0.5) 0%, rgba(30,29,35,1) 80%), url(Wallpapers/abandon-wallpaper.png) no-repeat top center;
 }
 
 #hogwarts
 {
-    background: linear-gradient(#3a3455,#80474f);
     height: 100vh;
+    background: radial-gradient(ellipse at 70% 50%, rgba(30,29,35,0.7) 0%, rgba(30,29,35,1) 70%), url(Wallpapers/larry-wallpaper.png) no-repeat top center;
 }
 
 #pixel
 {
-    background: linear-gradient(#80474f,#401143);
     height: 100vh;
+    background: radial-gradient(ellipse at 70% 50%, rgba(30,29,35,0.6) 0%, rgba(30,29,35,1) 70%), url(Wallpapers/pixel-wallpaper.png) no-repeat top center;
 }
 #runner
 {
-    background: linear-gradient(#401143,#200f3f);
     height: 100vh;
+    background: radial-gradient(ellipse at 70% 50%, rgba(30,29,35,0.7) 0%, rgba(30,29,35,1) 65%), url(Wallpapers/runner-wallpaper.png) no-repeat top center;
 }
 
 #time
 {
-    background: linear-gradient(#200f3f,#401143);
     height: 100vh;
+    background: radial-gradient(ellipse at 70% 50%, rgba(30,29,35,0.8) 0%, rgba(30,29,35,1) 70%), url(Wallpapers/time-wallpaper.png) no-repeat top center;
 }
 
 #control
 {
-    background: linear-gradient(#401143,#80474f);
     height: 100vh;
+    background: radial-gradient(ellipse at 70% 50%, rgba(30,29,35,0.8) 0%, rgba(30,29,35,1) 70%), url(Wallpapers/control-wallpaper.png) no-repeat top center;
 }
 
 .content iframe
@@ -181,10 +206,11 @@ section
     margin: auto;
     width: 90%;
     height: 90%;
-    background: linear-gradient(to right bottom,rgba(255,255,255,0.05),rgb(255,255,255,0.15));
-    box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
-    border-radius: 1rem;
-    overflow: hidden;
+    background-color: rgba(138, 132, 153, 0.05);
+    /*background: linear-gradient(to right bottom,rgba(255,255,255,0.05),rgb(255,255,255,0.15));*/
+    /* box-shadow: 0px 0px 20px rgba(0,0,0,0.2); */
+    /* border-radius: 1rem; */
+    overflow-x: hidden;
 
     transform: translate(0%,70px);
 }
@@ -213,14 +239,12 @@ section
     display: block;
 }
 
-
-
 .projectimages a img
 {
     margin: auto;
     left: 50%;
+    border-radius: 1em;
 }
-
 
 
 .projectdesc
@@ -235,15 +259,17 @@ section
 
 .projectdesc h3
 {
-    font-size: 38px;
-    padding-bottom: 40px;
-    text-align: center;
+    font-family: "Merel", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 40px;
+    padding-bottom: 30px;
+    text-align: center;   
 }
 
 .projectdesc a
 {
     font-size: 20px;
-    position: relative;
     letter-spacing: 0.5px;
     font-weight: 400;
     text-decoration: none;
@@ -252,9 +278,22 @@ section
     color: #161322;
 	border-radius: 10px;
 	padding: 5px 7px;
+    margin-left: -3%;
 }
 
+.info-btn
+{
+    text-align: center;
+    position: absolute;
+    overflow: hidden;
+    transition: all 0.6s cubic-bezier(0.55, 0, 0.1, 1) 0s;
+    cursor: pointer;
+}
 
+.info-btn:hover
+{
+    box-shadow: rgb(255, 255, 255,0.8) 8px 8px 0px, rgba(255, 255, 255, 0.8) -8px -8px 0px;
+}
 
 .projectdesc p
 {
@@ -262,6 +301,9 @@ section
     padding-top: 20px;
     font-size: 16pt;
     margin-top: 30px;
+    font-family: "Merel", sans-serif;
+    font-weight: 100;
+    font-style: normal;
 }
 
 #stick .projectdesc h3, #monke .projectdesc h3, #hogwarts .projectdesc h3
@@ -271,14 +313,42 @@ section
 
 #stick .projectdesc h2, #monke .projectdesc h2, #hogwarts .projectdesc h2
 {
-    margin-bottom: 30px;
+    font-family: 'Merel';
+    font-weight: 100;
+    font-size: 18px;
+    margin-bottom: 10px;
 }
 
-#stick .projectdesc p, #monke .projectdesc p
+#pixel .projectdesc h2, #runner .projectdesc h2, #time .projectdesc h2, #control .projectcontainer h2
 {
-    margin-top: 10px;
+    font-family: 'Merel';
+    font-weight: 100;
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
+#abandon .projectdesc h2
+{
+    font-family: 'Merel';
+    font-weight: 100;
+    font-size: 22px;
+    margin-top: -20px;
+}
+
+#stick .projectdesc p 
+{
+    margin-top: 40px;
+}
+
+#monke .projectdesc p
+{
+    margin-top: 50px;
+}
+
+#hogwarts .projectdesc p
+{
+    margin-top: 70px;
+}
 
 #time .projectmedia, #control .projectmedia
 {
