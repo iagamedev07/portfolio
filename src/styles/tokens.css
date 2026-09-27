@@ -1,4 +1,3 @@
-
 :root {
   /* colour */
   --bg: #0a0a0b;
@@ -17,6 +16,7 @@
   --font-display: 'Archivo Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --display-weight: 800;
   --display-stretch: 125%;
+  --font-body: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --fs-pill: 12px;
   --fs-footer: 20px;

@@ -1,4 +1,3 @@
-
 export interface Field {
   cols: number;
   rows: number;

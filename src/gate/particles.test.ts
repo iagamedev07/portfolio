@@ -41,7 +41,7 @@ describe('stepField', () => {
     expect(Math.abs(f.x[i]! - f.hx[i]!)).toBeLessThan(0.5);
   });
 
-    it('splits a long frame into normal steps instead of flinging particles', () => {
+  it('splits a long frame into normal steps instead of flinging particles', () => {
     const push = { x: 25, y: 27, active: true };
     const a = buildField(mask(60, 60, [0, 0, 0, 0]), 60, 60, 6);
     const b = buildField(mask(60, 60, [0, 0, 0, 0]), 60, 60, 6);

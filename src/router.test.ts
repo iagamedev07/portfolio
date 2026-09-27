@@ -46,6 +46,8 @@ describe('parseHash', () => {
     ['#/projects/star-ballz/1', { view: 'field', section: 'projects' }],
     ['#/experience', watch],
     ['#/experience/nope/3', watch],
+    ['#/about', { view: 'page', page: 'about' }],
+    ['#/Contact/', { view: 'page', page: 'contact' }],
   ];
 
   it.each(cases)('%s', (hash, expected) => {
@@ -61,6 +63,12 @@ describe('parseHash', () => {
           expect(parseHash(formatRoute(route))).toEqual(route);
         });
       }
+    }
+  });
+
+  it('round-trips the about and contact pages', () => {
+    for (const page of ['about', 'contact'] as const) {
+      expect(parseHash(formatRoute({ view: 'page', page }))).toEqual({ view: 'page', page });
     }
   });
 });

@@ -1,10 +1,15 @@
 import { getProject, getSection } from './content';
 import type { SectionId } from './content';
 
-// `slide` is 0-based here. URLs show it 1-based to match the "02 / 06" label.
+export type PageId = 'about' | 'contact';
+
+const PAGES: readonly string[] = ['about', 'contact'];
+const isPage = (id: string): id is PageId => PAGES.includes(id);
+
 export type Route =
   | { view: 'field'; section: SectionId }
-  | { view: 'viewer'; section: SectionId; project: string; slide: number };
+  | { view: 'viewer'; section: SectionId; project: string; slide: number }
+  | { view: 'page'; page: PageId };
 
 const HOME: Route = { view: 'field', section: 'home' };
 
@@ -17,6 +22,8 @@ export function parseHash(hash: string): Route {
     .split('/')
     .filter(Boolean)
     .map((part) => part.toLowerCase());
+
+  if (sectionId && isPage(sectionId)) return { view: 'page', page: sectionId };
 
   const section = sectionId ? getSection(sectionId) : undefined;
   if (!section) return HOME;
@@ -32,6 +39,7 @@ export function parseHash(hash: string): Route {
 }
 
 export function formatRoute(route: Route): string {
+  if (route.view === 'page') return `#/${route.page}`;
   if (route.view === 'field') return route.section === 'home' ? '#/' : `#/${route.section}`;
   return `#/${route.section}/${route.project}/${route.slide + 1}`;
 }

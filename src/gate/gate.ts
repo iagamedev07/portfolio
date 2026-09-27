@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { ease, MOBILE_QUERY, prefersReducedMotion } from '../motion/tokens';
 import type { Route } from '../router';
 import { buildField, PHYSICS, stepField, type Field, type Pointer } from './particles';
+import { hexToRgb, mixRgb, rgbString } from '../lib/color';
 import './gate.css';
 
 const SEEN_KEY = 'hc-gate-seen';
@@ -24,8 +25,6 @@ const GLITCH = {
   offsetMin: 11,
   offsetMax: 44,
 };
-
-type Rgb = [number, number, number];
 
 interface Band {
   /** 'h' shifts a strip of rows sideways, 'v' shifts a strip of columns up or down. */
@@ -54,8 +53,9 @@ export function runGate(): Promise<void> {
     const app = document.getElementById('app');
     const root = document.createElement('div');
     root.className = 'gate';
+    root.dataset.cursor = 'hide';
     root.innerHTML = `
-      <h1 class="visually-hidden">Hemang Chauhan</h1>
+      <h1 class="visually-hidden" translate="no">Hemang Chauhan</h1>
       <canvas class="gate-canvas" aria-hidden="true"></canvas>
       <p class="gate-role display">Game developer</p>
       <button class="gate-enter display" type="button">Enter</button>
@@ -125,13 +125,13 @@ export function runGate(): Promise<void> {
       }
 
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = rgb(colours.bg);
+      ctx.fillStyle = rgbString(colours.bg);
       ctx.fillRect(0, 0, width, height);
 
       // Particles at rest, batched by colour.
       split.length = 0;
       for (let pass = 0; pass < 2; pass++) {
-        ctx.fillStyle = rgb(pass ? colours.paper : colours.dot);
+        ctx.fillStyle = rgbString(pass ? colours.paper : colours.dot);
         for (let i = 0; i < f.count; i++) {
           if (f.lit[i] !== pass) continue;
           const row = Math.floor(i / f.cols);
@@ -355,19 +355,6 @@ function readColours() {
   const css = getComputedStyle(document.documentElement);
   const bg = hexToRgb(css.getPropertyValue('--bg'));
   const paper = hexToRgb(css.getPropertyValue('--paper'));
-  const dot: Rgb = [
-    Math.round(bg[0] + (paper[0] - bg[0]) * DOT_MIX),
-    Math.round(bg[1] + (paper[1] - bg[1]) * DOT_MIX),
-    Math.round(bg[2] + (paper[2] - bg[2]) * DOT_MIX),
-  ];
+  const dot = mixRgb(bg, paper, DOT_MIX);
   return { bg, paper, dot };
-}
-
-function hexToRgb(hex: string): Rgb {
-  const n = Number.parseInt(hex.trim().replace('#', ''), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
-
-function rgb([r, g, b]: Rgb): string {
-  return `rgb(${r}, ${g}, ${b})`;
 }
