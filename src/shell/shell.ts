@@ -35,6 +35,10 @@ export interface Shell {
   /** Where the field (Phase 3) and viewer (Phase 4) mount. */
   stage: HTMLElement;
   clock: Clock;
+  /** Screen rect of a section's visible pill (rail on desktop, pill bar on phone). */
+  pillRect(section: SectionId): DOMRect | null;
+  /** Tucks the section pills away (the viewer does this so its left arrow is clear). */
+  retractRail(): void;
 }
 
 export function mountShell(app: HTMLElement): Shell {
@@ -98,7 +102,14 @@ export function mountShell(app: HTMLElement): Shell {
     document.title = heading ? `${heading} · ${NAME}` : `${NAME} · Game developer`;
   });
 
-  return { playIntro: rail.playIntro, stage, clock };
+  const pillRect = (section: SectionId) => {
+    const pill = pillLinks.find(
+      (link) => link.dataset.section === section && link.getClientRects().length > 0,
+    );
+    return pill?.getBoundingClientRect() ?? null;
+  };
+
+  return { playIntro: rail.playIntro, retractRail: rail.retract, stage, clock, pillRect };
 }
 
 function pills(): string {

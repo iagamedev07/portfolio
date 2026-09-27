@@ -10,6 +10,7 @@ import { runGate, shouldShowGate } from './gate/gate';
 import { prefersReducedMotion } from './motion/tokens';
 import { currentRoute, startRouter } from './router';
 import { mountShell } from './shell/shell';
+import { mountViewer } from './viewer/viewer';
 
 if (import.meta.env.DEV) {
   const problems = validateContent();
@@ -22,12 +23,18 @@ const app = document.getElementById('app');
 if (!app) throw new Error('#app is missing from index.html');
 
 startAccentCycle();
-const shell = mountShell(app);
-mountField(shell.stage);
-startRouter();
-
 const cursor = cursorSupported() ? startCursor() : null;
-if (cursor && !prefersReducedMotion()) startTrail();
+const trail = cursor && !prefersReducedMotion() ? startTrail() : null;
+
+const shell = mountShell(app);
+const field = mountField(shell.stage);
+mountViewer(app, {
+  field,
+  shell,
+  onScreenChange: () => cursor?.refresh(),
+  setTrail: (on) => trail?.setEnabled(on),
+});
+startRouter();
 
 // One orchestrated load moment: the pills stagger in as the gate fades (or straight away without it).
 if (shouldShowGate(currentRoute())) {

@@ -14,7 +14,7 @@ export function renderCard(project: Project, href: string): HTMLAnchorElement {
 
   const media: Media = project.cover ?? project.slides[0]?.media ?? { kind: 'none' };
   const tag =
-    media.kind === 'none'
+    media.kind === 'none' || media.kind === 'placeholder'
       ? ''
       : `<span class="card-tag display" aria-hidden="true">${escapeHtml(project.name)}</span>`;
   card.innerHTML = `

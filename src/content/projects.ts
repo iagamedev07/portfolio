@@ -4,6 +4,12 @@ const todo = (title: string, meta: string[] = []): Slide => ({
   title,
   description: 'Placeholder. Real copy comes in Phase 5.',
   meta,
+  media: { kind: 'placeholder' },
+});
+
+// Text-only slides (no footage by design), e.g. earlier roles and education.
+const textOnly = (title: string, meta: string[] = []): Slide => ({
+  ...todo(title, meta),
   media: { kind: 'none' },
 });
 
@@ -19,9 +25,9 @@ export const projects: Project[] = [
       todo('Deterministic multiplayer'),
       todo('VFX'),
       todo('Debugging and optimisation'),
-      todo('Freelance game developer', ['2023 to present']),
-      todo('Technical Graphic Designer Intern', ['IntellectPartners, Oct 2022 to Feb 2023']),
-      todo('B.Tech Computer Science', ['Manav Rachna University, 2019 to 2023']),
+      textOnly('Freelance game developer', ['2023 to present']),
+      textOnly('Technical Graphic Designer Intern', ['IntellectPartners, Oct 2022 to Feb 2023']),
+      textOnly('B.Tech Computer Science', ['Manav Rachna University, 2019 to 2023']),
     ],
   },
   {

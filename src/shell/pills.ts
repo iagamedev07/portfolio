@@ -4,7 +4,10 @@ const SETTLE_MS = 300;
 const IDLE_MS = 4000;
 const LEAVE_DELAY_MS = 180; // debounces jitter at the sliver edge
 
-export function setupRail(rail: HTMLElement, zone: HTMLElement): { playIntro(): void } {
+export function setupRail(
+  rail: HTMLElement,
+  zone: HTMLElement,
+): { playIntro(): void; retract(): void } {
   let leaveTimer = 0;
   let played = false;
 
@@ -31,6 +34,10 @@ export function setupRail(rail: HTMLElement, zone: HTMLElement): { playIntro(): 
       requestAnimationFrame(() => rail.classList.add('is-in'));
       window.setTimeout(() => rail.classList.remove('is-intro'), introMs);
       window.setTimeout(() => rail.classList.add('is-retracted'), introMs + SETTLE_MS + IDLE_MS);
+    },
+    /** Tuck the pills away now, e.g. so the viewer's arrow has room. Hover still brings them back. */
+    retract() {
+      rail.classList.add('is-retracted');
     },
   };
 }

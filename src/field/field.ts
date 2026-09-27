@@ -44,6 +44,7 @@ const SWITCH_OVERLAP_S = 0.35;
 
 interface CardNode {
   el: HTMLElement;
+  slug: string;
   sphere: LatLon;
   cube: LatLon;
   now: LatLon;
@@ -74,7 +75,19 @@ const lerp3 = (a: Vec3, b: Vec3, t: number): Vec3 => [
 ];
 const scale3 = (v: Vec3, s: number): Vec3 => [v[0] * s, v[1] * s, v[2] * s];
 
-export function mountField(stage: HTMLElement): void {
+/** What the viewer needs from the field while a project is open over it. */
+export interface Field {
+  /** Screen rect of a card, for the viewer's fly-out (FLIP) start. */
+  cardRect(slug: string): DOMRect | null;
+  /** Hides the card that's "in" the viewer; null shows them all again. */
+  setCardHidden(slug: string | null): void;
+  /** Paused and inert while the viewer covers it. */
+  setActive(active: boolean): void;
+  /** Returns focus to a card after the viewer closes. False if it isn't on screen. */
+  focusCard(slug: string): boolean;
+}
+
+export function mountField(stage: HTMLElement): Field {
   const reduce = prefersReducedMotion();
   const touch = window.matchMedia('(hover: none)').matches;
   const rot = { x: START_TILT, y: 0, z: 0 };
@@ -92,6 +105,7 @@ export function mountField(stage: HTMLElement): void {
   let raf = 0;
   let last = 0;
   let resizeTimer = 0;
+  let active = true;
 
   const buildScene = (section: Section): Scene => {
     const root = document.createElement('div');
@@ -121,7 +135,7 @@ export function mountField(stage: HTMLElement): void {
       const el = renderCard(project, href);
       world.append(el);
       const sphere = fibonacciLatLon(i, projects.length);
-      return { el, sphere, cube: cubeLatLon(i), now: sphere, depth: 1 };
+      return { el, slug: project.slug, sphere, cube: cubeLatLon(i), now: sphere, depth: 1 };
     });
 
     const grid = sphereWires(projects.length);
@@ -212,7 +226,7 @@ export function mountField(stage: HTMLElement): void {
     }
     const k = last ? Math.min((now - last) * 0.06, 3) : 1; // elapsed time in 60 fps frames
     last = now;
-    if (!dragging && !focusLock && !reduce) {
+    if (active && !dragging && !focusLock && !reduce) {
       const auto = autoSpeed(scene.nodes.length);
       rot.y += (auto + vy) * k;
       rot.z += auto * Z_SPIN_SHARE * k;
@@ -280,6 +294,7 @@ export function mountField(stage: HTMLElement): void {
     focusLock = false;
     if (next) {
       stage.append(next.root);
+      next.root.inert = !active;
       layoutScene(next);
       render(next);
       wake();
@@ -403,4 +418,24 @@ export function mountField(stage: HTMLElement): void {
       if (current) layoutScene(current);
     }, 150);
   });
+
+  const findNode = (slug: string) => current?.nodes.find((node) => node.slug === slug);
+
+  return {
+    cardRect: (slug) => findNode(slug)?.el.getBoundingClientRect() ?? null,
+    setCardHidden(slug) {
+      for (const node of current?.nodes ?? []) {
+        node.el.style.visibility = node.slug === slug ? 'hidden' : '';
+      }
+    },
+    setActive(next) {
+      active = next;
+      if (current) current.root.inert = !next;
+    },
+    focusCard(slug) {
+      const node = findNode(slug);
+      node?.el.focus({ preventScroll: true });
+      return node !== undefined;
+    },
+  };
 }
