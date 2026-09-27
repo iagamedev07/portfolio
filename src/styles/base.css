@@ -1,0 +1,115 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--paper);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent; /* pills and links have their own pressed states */
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  font-stretch: var(--display-stretch);
+  font-synthesis: none;
+  text-transform: uppercase;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* CSS motion collapses to instant. JS motion checks prefersReducedMotion() and swaps in short fades. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Marching-ants border */
+.ants::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--paper) 50%, var(--ink) 50%) 0 0 / var(--ants-dash, 10px)
+      var(--ants-width, 2px) repeat-x,
+    linear-gradient(90deg, var(--paper) 50%, var(--ink) 50%) 0 100% / var(--ants-dash, 10px)
+      var(--ants-width, 2px) repeat-x,
+    linear-gradient(0deg, var(--paper) 50%, var(--ink) 50%) 0 0 / var(--ants-width, 2px)
+      var(--ants-dash, 10px) repeat-y,
+    linear-gradient(0deg, var(--paper) 50%, var(--ink) 50%) 100% 0 / var(--ants-width, 2px)
+      var(--ants-dash, 10px) repeat-y;
+  animation: ants 0.4s linear infinite;
+}
+
+@keyframes ants {
+  to {
+    background-position:
+      var(--ants-dash, 10px) 0,
+      calc(var(--ants-dash, 10px) * -1) 100%,
+      0 calc(var(--ants-dash, 10px) * -1),
+      100% var(--ants-dash, 10px);
+  }
+}

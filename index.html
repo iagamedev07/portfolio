@@ -1,84 +1,45 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <title>Portfolio</title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="index.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet"> 
-    </head>
-    <body>
-        <div id="tsparticles"></div>
-        <script src = "https://cdnjs.cloudflare.com/ajax/libs/tsparticles/1.39.0/tsparticles.min.js"></script>
-        <script src="bgparticles.js"></script>
-        <div class="container">
-            <div class="topbar">
-                <a href="index.html" class="logo-button">HC</a>
-                <div class="navbar">
-                    <ul>
-                        <li><a href="aboutme.html" class="navbar-btn">About Me</a></li>
-                        <li><a href="project.html" class="navbar-btn">Projects</a></li>
-                        <li><a href="otherstuff.html" class="navbar-btn">Other Stuff</a></li>
-                        <li><a href="contact.html" class="navbar-btn">Contact</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="main">
-                <div class="info">
-                    <div class="info-desc">
-                        <p>
-                            Explore My Journey!
-                        </p>
-                        <p>
-                            Check out my CV to learn more about my Professional background and a portfolio reel 
-                            showcasing a visual tapestry of my work.
-                        </p>
-                    </div>
-                    <div class="info-links">
-                        <ul>
-                            <li><a href="https://youtu.be/EWvWkxbnxXA" target="_blank" class="info-btn">Portfolio Reel</a></li>
-                            <li><a href="Hemang_CV.pdf" target="_blank" class="info-btn">CV</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="intro">
-                    <div class="avatar">
-                        <img src="avatar.png" alt="" class="avatar-img">
-                    </div>
-                    <div class="intro-desc">
-                        <p>Hi! I am</p>
-                        <p>Hemang Chauhan</p>
-                        <p>(Also Known as "AeroBlizz" 
-                            <a href="https://www.youtube.com/c/AeroBlizz" target="_blank"><i class="fab fa-youtube"></i></a>
-                            and "NeoSparX" 
-                            <a href="https://play.google.com/store/apps/developer?id=NeoSparX" target="_blank"><i class="fab fa-google-play"></i></a> 
-                            )
-                        </p>
-                        <p>A Solo Indie Game Developer, Youtuber.
-                            Computer Enthusiast who loves to create Video Games and Entertaining Content. 
-                            Aside from Game Dev I Love Editing, Art, Graphic Designing and Animation. 
-                            Also Produces Music and Do Sound Design as a Hobby.</p>
-                    </div>  
-                </div>
-            </div>
-            <div class="bottom-bar">
-                <div class="dashed-line"></div>
-                <div class="contact-links">
-                    <ul>
-                        <li><a href="https://www.youtube.com/c/AeroBlizz" target="_blank"><i class="fab fa-youtube"></i></a></li>
-                        <li><a href="https://play.google.com/store/apps/details?id=com.NeoSparX.StarBallz" target="_blank"><i class="fab fa-google-play"></i></a></li>
-                        <li><a href="https://aeroblizz.itch.io/" target="_blank"><i class="fab fa-itch-io"></i></a></li>
-                        <li><a href="https://www.instagram.com/aero_blizz07/" target="_blank"><i class="fab fa-instagram"></i></a></li>
-                        <li><a href="https://twitter.com/BlizzAero" target="_blank"><i class="fab fa-twitter"></i></a></li>
-                        <li><a href="https://www.linkedin.com/in/hemang-chauhan-219a50235/" target="_blank"><i class="fab fa-linkedin"></i></a></li>
-                    </ul>
-                </div>
-                <div class="dashed-line-2"></div>
-            </div>
-        </div>
-        
-    </body>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0a0b" />
+    <title>Hemang Chauhan · Game developer</title>
+    <meta
+      name="description"
+      content="Unity and Unreal game developer. Gameplay, UI, multiplayer, VFX and tools."
+    />
+    <meta name="author" content="Hemang Chauhan" />
+    <link rel="canonical" href="https://iagamedev07.github.io/portfolio/" />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Link previews (LinkedIn, Discord, Slack, X). Absolute URLs: update them with a custom domain. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Hemang Chauhan" />
+    <meta property="og:title" content="Hemang Chauhan · Game developer" />
+    <meta
+      property="og:description"
+      content="Unity and Unreal game developer. Gameplay, UI, multiplayer, VFX and tools."
+    />
+    <meta property="og:url" content="https://iagamedev07.github.io/portfolio/" />
+    <meta property="og:image" content="https://iagamedev07.github.io/portfolio/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Hemang Chauhan, game developer, in dot-matrix type" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>
+      <p style="max-width: 40rem; margin: 3rem auto; padding: 0 1.25rem; font: 18px/1.5 sans-serif">
+        Hemang Chauhan, game developer. This portfolio needs JavaScript. You can still
+        <a href="%BASE_URL%Hemang_Chauhan_CV.pdf">download the CV</a> or email
+        <a href="mailto:iagamedev07@gmail.com">iagamedev07@gmail.com</a>.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>
