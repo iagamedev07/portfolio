@@ -2,6 +2,7 @@
 // loop as webm + mp4 with a poster, aiming for under 3 MB (CLAUDE.md, Media).
 //
 //   npm run media -- <input> <name> [--start 12.5] [--duration 6] [--width 1280] [--fps 30]
+//                   [--poster 2]
 //
 // <name> is the folder under public/media, e.g. pixel-sandbox/chunks. The script prints the
 // `media:` object to paste into src/content/projects.ts. Needs ffmpeg and ffprobe on PATH
@@ -23,19 +24,21 @@ const { values, positionals } = parseArgs({
     duration: { type: 'string', default: '6' },
     width: { type: 'string', default: '1280' },
     fps: { type: 'string', default: '30' },
+    poster: { type: 'string', default: '0' },
     help: { type: 'boolean', short: 'h' },
   },
 });
 
 const [input, name] = positionals;
 if (values.help || !input || !name) {
-  console.log(`Usage: npm run media -- <input> <name> [--start s] [--duration s] [--width px] [--fps n]
+  console.log(`Usage: npm run media -- <input> <name> [--start s] [--duration s] [--width px] [--fps n] [--poster s]
 
   <input>   a video (mp4, mov, mkv...) or an image
   <name>    output folder under public/media, lowercase with dashes, e.g. pixel-sandbox/chunks
 
   Video: --start and --duration pick the loop (defaults 0 and 6 s), --width caps the size
-  (default 1280, never upscales), --fps defaults to 30.`);
+  (default 1280, never upscales), --fps defaults to 30,
+  --poster picks the poster frame in seconds into the loop (default 0).`);
   process.exit(values.help ? 0 : 1);
 }
 if (!existsSync(input)) fail(`Can't find ${input}`);
@@ -89,7 +92,8 @@ if (IMAGE_TYPES.has(extname(input).toLowerCase())) {
     mp4,
   ]);
   console.log('Grabbing the poster...');
-  ffmpeg(['-ss', values.start, '-i', input, '-frames:v', '1', '-vf', scale, '-q:v', '3', poster]);
+  const posterAt = String(Number(values.start) + Number(values.poster));
+  ffmpeg(['-ss', posterAt, '-i', input, '-frames:v', '1', '-vf', scale, '-q:v', '3', poster]);
 
   const size = dimensions(mp4);
   report([webm, mp4, poster]);

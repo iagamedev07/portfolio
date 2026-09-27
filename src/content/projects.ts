@@ -1,4 +1,15 @@
-import type { Project, Slide } from './types';
+import { asset } from './assets';
+import type { Media, Project, Slide } from './types';
+
+// Card cover: a silent 16:9 loop that plays on hover (npm run media -- <clip> <slug>/cover --width 640).
+const cover = (slug: string, alt: string): Media => ({
+  kind: 'video',
+  webm: asset(`${slug}/cover/clip.webm`),
+  mp4: asset(`${slug}/cover/clip.mp4`),
+  poster: asset(`${slug}/cover/poster.jpg`),
+  alt,
+  aspect: 16 / 9,
+});
 
 const todo = (title: string, meta: string[] = []): Slide => ({
   title,
@@ -16,7 +27,11 @@ const textOnly = (title: string, meta: string[] = []): Slide => ({
 export const projects: Project[] = [
   {
     slug: 'the-watch',
-    name: 'The Watch',
+    name: 'The Pyramid Watch',
+    cover: cover(
+      'the-watch',
+      'Units clashing with spell effects on a forest battlefield in THE WATCH',
+    ),
     slides: [
       todo('Overview', ['Unity, Photon Quantum', 'The Pyramid Watch, Dec 2023 to present']),
       todo('UI'),
@@ -33,6 +48,10 @@ export const projects: Project[] = [
   {
     slug: 'pixel-sandbox',
     name: 'Pixel Sandbox Survival',
+    cover: cover(
+      'pixel-sandbox',
+      'Pixel character running across the grass and up onto a raised cliff',
+    ),
     slides: [
       todo('Endless procedural world', ['Unity, C#']),
       todo('Runtime sprite terrain'),
@@ -44,6 +63,10 @@ export const projects: Project[] = [
   {
     slug: 'dhaba-simulator',
     name: 'Dhaba Simulator',
+    cover: cover(
+      'dhaba-simulator',
+      'First-person walk from the kitchen out to customers eating at the dhaba',
+    ),
     slides: [
       todo('Co-op cooking', ['Unity, Netcode for GameObjects']),
       todo('Interaction and simulation systems'),
@@ -52,8 +75,12 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: 'unreal-traversal',
-    name: 'Unreal Traversal',
+    slug: 'unreal-engine',
+    name: 'Unreal Engine',
+    cover: cover(
+      'unreal-engine',
+      'A traversal test, an open grass hill and an overgrown abandoned room in Unreal',
+    ),
     slides: [
       todo('Replicated traversal', ['Unreal, C++, Blueprints']),
       todo('Custom animation'),
@@ -62,7 +89,11 @@ export const projects: Project[] = [
   },
   {
     slug: 'lattice',
-    name: 'Lattice',
+    name: 'Project LATTICE',
+    cover: cover(
+      'lattice',
+      'Shapes built from points and triangles, ending on a small island scene',
+    ),
     slides: [todo('Runtime modelling', ['Unity, itch.io']), todo('Solo production')],
   },
   {
@@ -71,8 +102,23 @@ export const projects: Project[] = [
     slides: [todo('Star Ballz', ['Unity, Google Play, 2018'])],
   },
   { slug: 'stick-exe', name: 'Stick.EXE', slides: [todo('Stick.EXE')] },
-  { slug: 'larrys-prophecy', name: "Larry's Prophecy", slides: [todo("Larry's Prophecy")] },
+  {
+    slug: 'larrys-prophecy',
+    name: "Larry's Prophecy",
+    cover: cover(
+      'larrys-prophecy',
+      'Larry running through a torch-lit dungeon as a Mementor closes in',
+    ),
+    slides: [todo("Larry's Prophecy")],
+  },
   { slug: 'prototypes', name: 'Prototypes', slides: [todo('Prototypes')] },
-  { slug: 'creative', name: 'Creative side', slides: [todo('Motion graphics and music')] },
-  { slug: 'showreel', name: 'Showreel', slides: [todo('Showreel')] },
+  {
+    slug: 'off-the-clock',
+    name: 'Off the Clock',
+    cover: cover(
+      'off-the-clock',
+      'A stickman animation running and tumbling around the Unity editor',
+    ),
+    slides: [todo('Animation'), todo('Editing'), todo('Motion graphics'), todo('Music')],
+  },
 ];

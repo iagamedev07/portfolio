@@ -1,4 +1,4 @@
-export type SectionId = 'home' | 'experience' | 'projects' | 'more-work';
+export type SectionId = 'home' | 'experience' | 'projects' | 'more-work' | 'off-the-clock';
 
 export type Media =
   | { kind: 'video'; webm: string; mp4: string; poster: string; alt: string; aspect?: number }

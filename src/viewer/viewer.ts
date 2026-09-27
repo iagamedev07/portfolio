@@ -196,11 +196,11 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     section = route.section;
     slide = route.slide;
     openedFromField = from?.view === 'field' && from.section === route.section;
-    // Fly out of the card that was clicked, or the Experience pill.
+    // Fly out of the card that was clicked, or the pill of a viewer section (Experience, Off the Clock).
     const source = openedFromField
       ? field.cardRect(p.slug)
-      : route.section === 'experience'
-        ? shell.pillRect('experience')
+      : getSection(route.section)?.layout === 'viewer'
+        ? shell.pillRect(route.section)
         : null;
 
     await document.fonts.ready; // the stand-in art is drawn with the display font

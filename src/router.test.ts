@@ -8,7 +8,7 @@ describe('content', () => {
   });
 
   it('wraps "Next project" within a section', () => {
-    expect(nextProject('projects', 'lattice')).toEqual({
+    expect(nextProject('projects', 'unreal-engine')).toEqual({
       section: 'projects',
       slug: 'pixel-sandbox',
     });
@@ -46,6 +46,10 @@ describe('parseHash', () => {
     ['#/projects/star-ballz/1', { view: 'field', section: 'projects' }],
     ['#/experience', watch],
     ['#/experience/nope/3', watch],
+    [
+      '#/off-the-clock',
+      { view: 'viewer', section: 'off-the-clock', project: 'off-the-clock', slide: 0 },
+    ],
     ['#/about', { view: 'page', page: 'about' }],
     ['#/Contact/', { view: 'page', page: 'contact' }],
   ];
