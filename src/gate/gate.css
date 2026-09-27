@@ -1,0 +1,89 @@
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-gate);
+  overflow: hidden;
+  background: var(--bg);
+  touch-action: none;
+  transition: opacity 0.9s var(--ease-in-out);
+}
+
+.gate.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gate-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.gate-role,
+.gate-enter {
+  position: absolute;
+  top: var(--gutter);
+  font-size: var(--fs-pill);
+  letter-spacing: var(--track-pill);
+}
+
+.gate-role {
+  left: var(--gutter);
+  padding: 11px 0;
+  color: var(--dim);
+}
+
+.gate-enter {
+  right: var(--gutter);
+  padding: 11px 20px;
+  border: var(--border) solid var(--paper);
+  border-radius: var(--radius-pill);
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.gate-enter:hover,
+.gate-enter:focus-visible {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Follows the mouse; its --bg fill matches the hole the repel force opens in the dots. */
+.gate-disc {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--disc, 150px);
+  height: var(--disc, 150px);
+  margin: calc(var(--disc, 150px) / -2) 0 0 calc(var(--disc, 150px) / -2);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  will-change: transform;
+}
+
+.gate-disc.is-visible {
+  opacity: 1;
+}
+
+.gate-disc-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--paper);
+  font-size: 24px;
+  letter-spacing: 0.08em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gate:not(.is-static),
+  .gate:not(.is-static) .gate-enter {
+    cursor: none;
+  }
+}
