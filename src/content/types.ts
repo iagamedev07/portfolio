@@ -28,6 +28,8 @@ export interface Project {
 export interface Section {
   id: SectionId;
   label: string;
+  /** Word(s) at the centre of the field. Defaults to `label`. */
+  emblem?: string;
   layout: 'field' | 'viewer';
   projects: string[];
 }

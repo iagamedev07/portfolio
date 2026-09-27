@@ -5,6 +5,7 @@ import { validateContent } from './content';
 import { startAccentCycle } from './cursor/accent';
 import { cursorSupported, startCursor } from './cursor/cursor';
 import { startTrail } from './cursor/trail';
+import { mountField } from './field/field';
 import { runGate, shouldShowGate } from './gate/gate';
 import { prefersReducedMotion } from './motion/tokens';
 import { currentRoute, startRouter } from './router';
@@ -22,6 +23,7 @@ if (!app) throw new Error('#app is missing from index.html');
 
 startAccentCycle();
 const shell = mountShell(app);
+mountField(shell.stage);
 startRouter();
 
 const cursor = cursorSupported() ? startCursor() : null;

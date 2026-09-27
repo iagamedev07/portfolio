@@ -4,6 +4,7 @@ export const sections: Section[] = [
   {
     id: 'home',
     label: 'Home',
+    emblem: 'Highlights',
     layout: 'field',
     projects: [
       'the-watch',
