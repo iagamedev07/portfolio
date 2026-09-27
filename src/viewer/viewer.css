@@ -139,6 +139,29 @@
   }
 }
 
+/* Phones, first open: the text is below, so say so. */
+.viewer-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--ink);
+  font-size: var(--fs-button);
+  letter-spacing: var(--track-button);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.4s ease;
+}
+
+.viewer-hint.is-visible {
+  opacity: 1;
+}
+
 /* ---------- text ---------- */
 
 .viewer-text {
@@ -510,6 +533,11 @@
   .viewer-arrow.is-next {
     right: var(--gutter);
     left: auto;
+  }
+
+  /* The pill bar's fade would wash out the filmstrip. */
+  #app:has(.viewer:not([hidden])) .pillbar-fade {
+    display: none;
   }
 
   .viewer-strip {

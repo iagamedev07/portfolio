@@ -49,11 +49,16 @@
   --space-8: 48px;
   --space-9: 64px;
   --space-10: 80px;
-  --gutter: 32px;
+  --gutter: max(32px, var(--safe-left), var(--safe-right));
   --footer-h: 64px;
   --filmstrip-h: 100px;
   --topbar-h: 60px;
   --pillbar-h: 64px;
+  /* Notches and home indicators (index.html sets viewport-fit=cover). */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 
   /* shape: interactive things are pills, media is sharp */
   --radius-pill: 999px;
@@ -93,7 +98,9 @@
 /* Phone layout breakpoint. Keep in sync with MOBILE_QUERY in src/motion/tokens.ts. */
 @media (max-width: 820px) {
   :root {
-    --gutter: 20px;
+    --gutter: max(20px, var(--safe-left), var(--safe-right));
+    --topbar-h: calc(60px + var(--safe-top));
+    --pillbar-h: calc(64px + var(--safe-bottom));
     --fs-title: clamp(22px, 6vw, 30px);
     --lh-title: 1.15;
     --fs-body: 17px;

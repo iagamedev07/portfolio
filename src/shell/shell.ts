@@ -39,6 +39,8 @@ export interface Shell {
   pillRect(section: SectionId): DOMRect | null;
   /** Tucks the section pills away (the viewer does this so its left arrow is clear). */
   retractRail(): void;
+  /** Undoes retractRail on touch screens (desktop pills stay tucked until hovered). */
+  restoreRail(): void;
 }
 
 export function mountShell(app: HTMLElement): Shell {
@@ -109,7 +111,14 @@ export function mountShell(app: HTMLElement): Shell {
     return pill?.getBoundingClientRect() ?? null;
   };
 
-  return { playIntro: rail.playIntro, retractRail: rail.retract, stage, clock, pillRect };
+  return {
+    playIntro: rail.playIntro,
+    retractRail: rail.retract,
+    restoreRail: rail.restore,
+    stage,
+    clock,
+    pillRect,
+  };
 }
 
 function pills(): string {

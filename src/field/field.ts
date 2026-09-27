@@ -33,7 +33,8 @@ const TILT_LIMIT = 70;
 const START_TILT = -8;
 const MAX_VELOCITY = 5; // degrees per 60 fps frame
 const FRICTION = 0.945; // per 60 fps frame
-const DRAG_THRESHOLD = 2;
+// Movement before a press counts as a drag (and stops being a click). Fingers wobble more than mice.
+const DRAG_THRESHOLD = { mouse: 2, touch: 10 };
 const Z_SPIN_SHARE = 0.62;
 const CARD_BASE = 170;
 const CARD_ASPECT = 16 / 9;
@@ -106,6 +107,7 @@ export function mountField(stage: HTMLElement): Field {
   let last = 0;
   let resizeTimer = 0;
   let active = true;
+  let threshold = DRAG_THRESHOLD.mouse;
 
   const buildScene = (section: Section): Scene => {
     const root = document.createElement('div');
@@ -355,6 +357,7 @@ export function mountField(stage: HTMLElement): Field {
     gsap.killTweensOf(rot);
     downX = lastX = e.clientX;
     downY = lastY = e.clientY;
+    threshold = e.pointerType === 'mouse' ? DRAG_THRESHOLD.mouse : DRAG_THRESHOLD.touch;
     scene.root.classList.add('is-grabbing');
   });
 
@@ -362,7 +365,7 @@ export function mountField(stage: HTMLElement): Field {
     'pointermove',
     (e) => {
       if (!dragging) return;
-      if (!dragged && Math.hypot(e.clientX - downX, e.clientY - downY) > DRAG_THRESHOLD) {
+      if (!dragged && Math.hypot(e.clientX - downX, e.clientY - downY) > threshold) {
         dragged = true;
       }
       const stepY = (e.clientX - lastX) * DRAG_DEG_PER_PX;

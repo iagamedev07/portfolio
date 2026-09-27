@@ -165,6 +165,7 @@ export function mountPages(app: HTMLElement, deps: { shell: Shell }): void {
     const hadFocus = root.contains(document.activeElement);
     root.classList.remove('is-open');
     shell.clock.setVisible(true);
+    shell.restoreRail();
     hideTimer = window.setTimeout(
       () => {
         root.hidden = true;

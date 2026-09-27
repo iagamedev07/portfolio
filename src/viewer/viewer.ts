@@ -49,6 +49,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     <div class="viewer-body">
       <div class="viewer-media">
         <div class="viewer-back" aria-hidden="true"></div>
+        <p class="viewer-hint display" aria-hidden="true">Scroll for info</p>
         <div class="viewer-frame ants" data-cursor="hide">
           <div class="viewer-shot"></div>
           <canvas class="viewer-sweep" aria-hidden="true"></canvas>
@@ -96,6 +97,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
   const nextButton = $('.viewer-arrow.is-next');
   const disc = $('.viewer-navdisc');
   const live = $('.viewer-live');
+  const hint = $('.viewer-hint');
   const swapArrow = swapper($('.navdisc-mask.is-arrow > span'));
   const swapNumber = swapper($('.navdisc-mask.is-num > span'));
 
@@ -178,7 +180,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
       ? textRect
       : media.getBoundingClientRect();
     const centre = anchor.top + anchor.height / 2;
-    prevButton.style.left = `${Math.max(8, anchor.left - 68)}px`;
+    prevButton.style.left = `${Math.max(64, anchor.left - 68)}px`; // clear of the 56px pill slivers
     nextButton.style.left = `${Math.min(window.innerWidth - 52, textRect.right + 24)}px`;
     prevButton.style.top = `${centre}px`;
     nextButton.style.top = `${centre}px`;
@@ -213,6 +215,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     deps.setTrail?.(false);
     root.getBoundingClientRect(); // lay out before measuring
     root.classList.add('is-open');
+    strip.setActive(slide); // now it's visible, scroll the current slide into the middle
     placeArrows();
 
     const end = media.getBoundingClientRect();
@@ -237,6 +240,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     root.classList.add('is-ready');
     showText(p);
     title.focus({ preventScroll: true });
+    maybeShowHint();
     deps.onScreenChange?.();
     finish();
   };
@@ -290,6 +294,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
       root.contains(document.activeElement) || document.activeElement === document.body;
     text.classList.remove('is-shown');
     root.classList.remove('is-ready');
+    hint.classList.remove('is-visible');
     hideDisc();
     frame.style.transform = '';
     gsap.to(back, { opacity: 0, duration: 0.15 });
@@ -327,6 +332,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     field.setActive(true);
     field.setCardHidden(null);
     shell.clock.setVisible(true);
+    shell.restoreRail();
     deps.setTrail?.(true);
     if (!reduce) await wait(90); // the backdrop is nearly down
 
@@ -466,6 +472,19 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
   window.addEventListener('resize', () => {
     if (project) placeArrows();
   });
+
+  /** Phones: once per visit, point out that the text is below the image. Gone on the first scroll. */
+  function maybeShowHint() {
+    if (!phone.matches || body.scrollHeight <= body.clientHeight + 8) return;
+    try {
+      if (sessionStorage.getItem('hc-scroll-hint')) return;
+      sessionStorage.setItem('hc-scroll-hint', '1');
+    } catch {
+      // Storage blocked: show it anyway.
+    }
+    hint.classList.add('is-visible');
+  }
+  body.addEventListener('scroll', () => hint.classList.remove('is-visible'), { passive: true });
 
   function sweepOptions() {
     const tint = getComputedStyle(document.documentElement).getPropertyValue('--sweep-tint').trim();

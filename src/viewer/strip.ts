@@ -33,7 +33,12 @@ export function createStrip(onSelect: (index: number) => void): Strip {
       if (current) cell.setAttribute('aria-current', 'true');
       else cell.removeAttribute('aria-current');
     });
-    cells[index]?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    // Phones scroll the strip sideways: keep the current slide in the middle.
+    cells[index]?.scrollIntoView({
+      block: 'nearest',
+      inline: 'center',
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    });
   };
 
   const showDither = (cell: HTMLButtonElement) => {
