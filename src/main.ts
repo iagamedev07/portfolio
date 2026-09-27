@@ -1,3 +1,6 @@
+import '@fontsource-variable/archivo/wdth.css';
+import './styles/tokens.css';
+import './styles/base.css';
 import { validateContent } from './content';
 import { formatRoute, onRouteChange, startRouter } from './router';
 

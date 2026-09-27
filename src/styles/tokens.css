@@ -1,0 +1,104 @@
+
+:root {
+  /* colour */
+  --bg: #0a0a0b;
+  --paper: #e8e6de;
+  --dim: #83817a;
+  --muted: #b8b6ae;
+  --ink: #0a0a0b;
+  --alert: #ff3b1f;
+  --accent: #ffe000; /* overwritten at runtime by the cursor colour cycle */
+  --hairline: rgb(232 230 222 / 0.14);
+  --backdrop: rgb(10 10 11 / 0.92);
+  --wire: rgb(255 255 255 / 0.55);
+  --sweep-tint: rgb(255 59 31 / 0.38);
+
+  /* type: display family is set after the font test */
+  --font-display: 'Archivo Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --display-weight: 800;
+  --display-stretch: 125%;
+
+  --fs-pill: 12px;
+  --fs-footer: 20px;
+  --fs-eyebrow: 11px;
+  --fs-title: clamp(22px, 2.6vw, 30px);
+  --lh-title: 1.12;
+  --fs-body: 20px;
+  --lh-body: 24px;
+  --fs-meta: 16px;
+  --fs-button: 13px;
+  --fs-close: 14px;
+  --fs-hud: 11px;
+  --fs-page-title: clamp(32px, 5vw, 56px);
+  --fs-page-body: 22px;
+  --lh-page-body: 1.45;
+
+  --track-pill: 0.06em;
+  --track-footer: 0.02em;
+  --track-eyebrow: 0.18em;
+  --track-button: 0.08em;
+
+  /* space and fixed chrome */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 48px;
+  --space-9: 64px;
+  --space-10: 80px;
+  --gutter: 32px;
+  --footer-h: 64px;
+  --filmstrip-h: 100px;
+  --topbar-h: 60px;
+  --pillbar-h: 64px;
+
+  /* shape: interactive things are pills, media is sharp */
+  --radius-pill: 999px;
+  --border: 1.5px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-fall: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-loader: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.2s;
+  --dur-hover: 0.25s;
+  --dur-ui: 0.4s;
+  --dur-move: 0.62s;
+  --dur-panel: 0.7s;
+
+  /* layers */
+  --z-scene: 0;
+  --z-atmosphere: 5;
+  --z-hud: 6;
+  --z-clock: 15;
+  --z-lightbox: 20;
+  --z-viewer: 50;
+  --z-viewer-ui: 53;
+  --z-filmstrip: 55;
+  --z-chrome: 56;
+  --z-logo: 57;
+  --z-topbar: 60;
+  --z-menu: 65;
+  --z-trail: 997;
+  --z-cursor: 998;
+  --z-loader: 2000;
+  --z-gate: 9999;
+}
+
+/* Phone layout breakpoint. Keep in sync with MOBILE_QUERY in src/motion/tokens.ts. */
+@media (max-width: 820px) {
+  :root {
+    --gutter: 20px;
+    --fs-title: clamp(22px, 6vw, 30px);
+    --lh-title: 1.15;
+    --fs-body: 17px;
+    --lh-body: 1.55;
+    --fs-page-body: 18px;
+    --lh-page-body: 1.55;
+  }
+}
