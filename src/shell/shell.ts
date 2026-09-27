@@ -25,7 +25,7 @@ interface BarLink {
 const BAR_LINKS: BarLink[] = [
   { label: 'About', href: formatRoute({ view: 'page', page: 'about' }), page: 'about' },
   { label: 'YouTube', href: YOUTUBE_URL, external: true, hint: '(opens in a new tab)' },
-  { label: 'CV', href: CV_URL, download: true, hint: '(PDF)' },
+  { label: 'CV', href: CV_URL, external: true, hint: '(PDF, opens in a new tab)' },
   { label: 'Contact', href: formatRoute({ view: 'page', page: 'contact' }), page: 'contact' },
 ];
 
