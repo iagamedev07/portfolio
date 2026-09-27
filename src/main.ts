@@ -11,6 +11,7 @@ import { prefersReducedMotion } from './motion/tokens';
 import { currentRoute, startRouter } from './router';
 import { mountShell } from './shell/shell';
 import { mountViewer } from './viewer/viewer';
+import { mountPages } from './page/page';
 
 if (import.meta.env.DEV) {
   const problems = validateContent();
@@ -34,6 +35,7 @@ mountViewer(app, {
   onScreenChange: () => cursor?.refresh(),
   setTrail: (on) => trail?.setEnabled(on),
 });
+mountPages(app, { shell });
 startRouter();
 
 // One orchestrated load moment: the pills stagger in as the gate fades (or straight away without it).

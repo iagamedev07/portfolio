@@ -81,13 +81,42 @@ export function loadImage(src: string): Promise<HTMLImageElement> {
 
 /** Stand-in art until the footage lands: the slide title on a paper card, like a held print. */
 function placeholderPoster(project: Project, index: number): string {
-  const key = `${project.slug}/${index}`;
+  return standInArt({
+    key: `${project.slug}/${index}`,
+    kicker: project.name,
+    corner: `${pad(index + 1)} / ${pad(project.slides.length)}`,
+    title: project.slides[index]?.title ?? '',
+  });
+}
+
+export interface StandIn {
+  /** Cache key. */
+  key: string;
+  /** Small line top-left. */
+  kicker: string;
+  /** Small line top-right. */
+  corner?: string;
+  /** Big title, bottom-left, sized to fit. */
+  title: string;
+  width?: number;
+  height?: number;
+}
+
+/** A paper card with a kicker and a big title, drawn with the display font. Returns a data URL. */
+export function standInArt({
+  key,
+  kicker,
+  corner = '',
+  title,
+  width = POSTER_W,
+  height = POSTER_H,
+}: StandIn): string {
   const cached = posters.get(key);
   if (cached) return cached;
 
   const canvas = document.createElement('canvas');
-  canvas.width = POSTER_W;
-  canvas.height = POSTER_H;
+  canvas.width = width;
+  canvas.height = height;
   const ctx = canvas.getContext('2d');
   if (!ctx) return '';
 
@@ -101,35 +130,35 @@ function placeholderPoster(project: Project, index: number): string {
   const margin = 96;
 
   ctx.fillStyle = paper;
-  ctx.fillRect(0, 0, POSTER_W, POSTER_H);
+  ctx.fillRect(0, 0, width, height);
   ctx.strokeStyle = ink;
   ctx.lineWidth = 4;
-  ctx.strokeRect(48, 48, POSTER_W - 96, POSTER_H - 96);
+  ctx.strokeRect(48, 48, width - 96, height - 96);
 
   ctx.fillStyle = ink;
   ctx.textBaseline = 'top';
   font(30);
-  ctx.fillText(project.name.toUpperCase(), margin, margin);
+  ctx.fillText(kicker.toUpperCase(), margin, margin);
   ctx.textAlign = 'right';
-  ctx.fillText(`${pad(index + 1)} / ${pad(project.slides.length)}`, POSTER_W - margin, margin);
+  ctx.fillText(corner, width - margin, margin);
   ctx.textAlign = 'left';
 
   // The title, as big as fits in the lower half.
-  const title = (project.slides[index]?.title ?? '').toUpperCase();
-  const maxWidth = POSTER_W - margin * 2;
+  const text = title.toUpperCase();
+  const maxWidth = width - margin * 2;
   let size = 160;
   let lines: string[] = [];
   for (; size > 56; size -= 8) {
     font(size);
-    lines = wrap(ctx, title, maxWidth);
+    lines = wrap(ctx, text, maxWidth);
     const widest = Math.max(...lines.map((line) => ctx.measureText(line).width));
-    if (widest <= maxWidth && lines.length * size <= POSTER_H * 0.5) break;
+    if (widest <= maxWidth && lines.length * size <= height * 0.5) break;
   }
   font(size);
-  lines = wrap(ctx, title, maxWidth);
+  lines = wrap(ctx, text, maxWidth);
   ctx.textBaseline = 'alphabetic';
   lines.forEach((line, i) => {
-    ctx.fillText(line, margin, POSTER_H - margin - (lines.length - 1 - i) * size * 0.95);
+    ctx.fillText(line, margin, height - margin - (lines.length - 1 - i) * size * 0.95);
   });
 
   const url = canvas.toDataURL('image/jpeg', 0.86);
