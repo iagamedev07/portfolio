@@ -10,7 +10,7 @@ import './shell.css';
 // top bar, menu and pill bar (docs/interactions.md 5.2, 5.13, 5.14, 5.15).
 
 const NAME = 'Hemang Chauhan';
-const YOUTUBE_URL = 'https://www.youtube.com/c/AeroBlizz';
+const YOUTUBE_URL = 'https://www.youtube.com/@AeroBlizz';
 const CV_URL = `${import.meta.env.BASE_URL}Hemang_Chauhan_CV.pdf`;
 
 interface BarLink {

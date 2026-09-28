@@ -31,21 +31,24 @@ export const pages: Record<'about' | 'contact', PageContent> = {
       pixelated: true,
     },
     paragraphs: [
-      "I'm Hemang, a Unity developer. I've been making games for over seven years, the last three of them commercially with a remote, international team.",
-      'Most of my work is gameplay programming and production UI, with multiplayer, VFX, rendering, shaders and tools along the way. I also build in Unreal with C++, and do 3D, animation, motion graphics and music on the side.',
-      "Right now I'm at The Pyramid Watch, working on THE WATCH. I own most of its UI and a good share of its gameplay systems.",
+      'I’m Hemang, a game developer. I started making games at 16, when I put my first one, Star Ballz, on the Play Store, and I haven’t really stopped since.',
+      'Since December 2023 I’ve been a Unity developer at The Pyramid Watch, working on THE WATCH. I look after most of its UI and a good chunk of the gameplay systems.',
+      'Outside work I make my own games, mostly in Unity and sometimes in Unreal with C++. I also run a YouTube channel, AeroBlizz, where I post devlogs, animations, video essays about game design, and now and then some music.',
+      'And I just like making things look and feel good, whether it’s a game or not. Editing videos, motion graphics, animation, art: I’ll happily lose a weekend to any of them.',
     ],
   },
   contact: {
     title: 'Contact',
     image: { alt: '', aspect: 4 / 5 },
-    paragraphs: ['Email works best. Everything else is below.'],
+    paragraphs: [
+      'Email’s the best way to reach me. If you just want to see what I’m up to, YouTube and itch.io are where new stuff shows up first.',
+    ],
     links: [
       { label: 'Email', text: 'iagamedev07@gmail.com', href: 'mailto:iagamedev07@gmail.com' },
       {
         label: 'YouTube',
         text: 'AeroBlizz',
-        href: 'https://www.youtube.com/c/AeroBlizz',
+        href: 'https://www.youtube.com/@AeroBlizz',
         external: true,
       },
       {
@@ -58,12 +61,6 @@ export const pages: Record<'about' | 'contact', PageContent> = {
         label: 'LinkedIn',
         text: 'Hemang Chauhan',
         href: 'https://www.linkedin.com/in/hemang-chauhan-219a50235/',
-        external: true,
-      },
-      {
-        label: 'Google Play',
-        text: 'NeoSparX',
-        href: 'https://play.google.com/store/apps/developer?id=NeoSparX',
         external: true,
       },
     ],
