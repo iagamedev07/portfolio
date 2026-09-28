@@ -6,13 +6,13 @@ import type { Media, Project, Slide, SlideLink } from './types';
  * A 16:9 loop encoded by `npm run media` into public/media/<folder>/. Silent unless it was
  * encoded with --audio and marked `{ audio: true }` here.
  */
-const clip = (folder: string, alt: string, { audio = false } = {}): Media => ({
+const clip = (folder: string, alt: string, { audio = false, aspect = 16 / 9 } = {}): Media => ({
   kind: 'video',
   webm: asset(`${folder}/clip.webm`),
   mp4: asset(`${folder}/clip.mp4`),
   poster: asset(`${folder}/poster.jpg`),
   alt,
-  aspect: 16 / 9,
+  aspect,
   audio,
 });
 
@@ -340,9 +340,67 @@ export const projects: Project[] = [
       'A traversal test, an open grass hill and an overgrown abandoned room in Unreal',
     ),
     slides: [
-      todo('Replicated traversal', ['Unreal, C++, Blueprints']),
-      todo('Custom animation'),
-      todo('Environment'),
+      {
+        title: 'Locomotion System',
+        description:
+          'A third-person movement system in Unreal, inspired by the Advanced Locomotion System (ALS). It covers the gameplay side of moving a character: walking, running and the transitions between them.\n\nI made the animations myself in Cascadeur, so the whole thing is built around my own animation set.',
+        meta: [
+          'Unreal Engine · C++ · Blueprints',
+          'Inspired by ALS · Animations made in Cascadeur',
+        ],
+        media: clip(
+          'unreal-engine/locomotion',
+          'A mannequin running in eight directions, taking stairs and leaning into turns, plus the animation in Cascadeur',
+          { aspect: 1 },
+        ),
+      },
+      {
+        title: 'Replicated C++ Movement',
+        description:
+          'The movement is written in C++ and replicated, so it works in multiplayer and every player sees the same thing.',
+        meta: ['C++ · Replication · Multiplayer'],
+        media: clip(
+          'unreal-engine/replication',
+          'Two game windows side by side, each player seeing the other move up the stairs in sync',
+        ),
+      },
+      {
+        title: 'Abandoned Area',
+        description:
+          'An environment piece in Unreal Engine 5: an abandoned area, a few old buildings that nature has taken over. I built the scene and then made a short cinematic of it.',
+        meta: ['UE5 · Environment design · Cinematic'],
+        media: youtube('L5nFDdSvATw', 'Abandoned Area, Unreal Engine 5 cinematic'),
+        links: [
+          { label: 'Watch the whole process', href: youtubeUrl('ImUWV6kq5TI'), icon: 'youtube' },
+        ],
+      },
+      {
+        title: 'Windows XP Wallpaper',
+        description:
+          'I remade Bliss, the famous Windows XP wallpaper, as a 3D scene in Unreal Engine 5: the green hill, the grass and flowers, and that blue sky.',
+        meta: ['UE5 · Landscape · Foliage'],
+        media: clip(
+          'unreal-engine/xp-wallpaper',
+          'The Bliss hill recreated in Unreal: grass and small flowers moving in the wind under a pale sky',
+        ),
+        links: [
+          { label: 'Watch the whole process', href: youtubeUrl('VGdvLz9FX_4'), icon: 'youtube' },
+        ],
+      },
+      {
+        title: 'Diwali Home',
+        description:
+          'A one-day challenge: a home lit up for Diwali, the festival of lights, built in Unreal Engine in a single day.',
+        meta: ['UE5 · 1-day challenge · Lighting'],
+        media: clip(
+          'unreal-engine/diwali',
+          'A veranda strung with fairy lights and plants at night, with fireworks going off behind',
+          { audio: true },
+        ),
+        links: [
+          { label: 'Watch the whole process', href: youtubeUrl('DUIjnRCucqE'), icon: 'youtube' },
+        ],
+      },
     ],
   },
   {
