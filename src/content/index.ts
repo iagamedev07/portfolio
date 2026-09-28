@@ -45,6 +45,11 @@ export function validateContent(): string[] {
     seen.add(p.slug);
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(p.slug)) problems.push(`Slug isn't URL-safe: ${p.slug}`);
     if (p.slides.length === 0) problems.push(`${p.slug} has no slides`);
+    for (const media of [p.cover, ...p.slides.map((slide) => slide.media)]) {
+      if (media?.kind === 'embed' && !media.src.startsWith('https://')) {
+        problems.push(`${p.slug} has an embed that isn't https: ${media.src}`);
+      }
+    }
   }
 
   for (const s of sections) {

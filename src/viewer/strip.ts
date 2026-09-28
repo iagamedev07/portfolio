@@ -54,7 +54,11 @@ export function createStrip(onSelect: (index: number) => void): Strip {
       canvas.width = HOVER_WIDTH;
       canvas.height = Math.round(HOVER_WIDTH / aspect);
       const ctx = canvas.getContext('2d');
-      if (ctx) drawDithered(ctx, img, canvas.width, canvas.height, 'color');
+      try {
+        if (ctx) drawDithered(ctx, img, canvas.width, canvas.height, 'color');
+      } catch {
+        return; // a poster from a site that doesn't allow reading its pixels: no dither
+      }
       cell.append(canvas);
     }
   };
@@ -73,6 +77,8 @@ export function createStrip(onSelect: (index: number) => void): Strip {
         const still = isTextOnly(slide) ? null : slideStill(project, i);
         if (still) {
           const img = document.createElement('img');
+          // Embed posters come from other sites; CORS lets the hover dither read their pixels.
+          if (/^https?:/.test(still)) img.crossOrigin = 'anonymous';
           img.src = still;
           img.alt = '';
           img.draggable = false;

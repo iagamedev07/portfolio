@@ -440,7 +440,9 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     if (!reduce) {
       frame.style.transform = `perspective(760px) rotateX(${((0.5 - py) * 2 * MAX_TILT).toFixed(2)}deg) rotateY(${((px - 0.5) * 2 * MAX_TILT).toFixed(2)}deg) scale(1.04)`;
     }
-    showDisc(e.clientX, e.clientY, px < 0.5 ? -1 : 1);
+    // Over an embed's play button the click plays, so the prev/next disc steps aside.
+    if (e.target instanceof Element && e.target.closest('.embed-play')) hideDisc();
+    else showDisc(e.clientX, e.clientY, px < 0.5 ? -1 : 1);
   });
   frame.addEventListener('pointerleave', () => {
     frame.style.transform = '';

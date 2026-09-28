@@ -13,13 +13,16 @@ const posters = new Map<string, string>();
 export function slideAspect(slide: Slide | undefined): number {
   const media = slide?.media;
   if (media?.kind === 'image') return media.width / media.height;
-  if (media?.kind === 'video') return media.aspect ?? DEFAULT_ASPECT;
+  if (media?.kind === 'video' || media?.kind === 'embed') return media.aspect ?? DEFAULT_ASPECT;
   return DEFAULT_ASPECT;
 }
 
 export const isTextOnly = (slide: Slide | undefined): boolean => slide?.media.kind === 'none';
 
-/** A still for the slide: the poster for video, generated art for placeholders, null if text-only. */
+/**
+ * A still for the slide: the poster for video and embeds, generated art for placeholders (and
+ * embeds without a poster), null if text-only.
+ */
 export function slideStill(project: Project, index: number): string | null {
   const slide = project.slides[index];
   switch (slide?.media.kind) {
@@ -27,6 +30,8 @@ export function slideStill(project: Project, index: number): string | null {
       return slide.media.src;
     case 'video':
       return slide.media.poster;
+    case 'embed':
+      return slide.media.poster ?? placeholderPoster(project, index);
     case 'placeholder':
       return placeholderPoster(project, index);
     default:
@@ -59,6 +64,7 @@ export function mediaElement(project: Project, index: number): HTMLElement | nul
     return video;
   }
   const still = slideStill(project, index);
+  if (slide.media.kind === 'embed') return embedElement(slide.media, still);
   if (!still) return null;
   const img = document.createElement('img');
   img.src = still;
@@ -66,6 +72,47 @@ export function mediaElement(project: Project, index: number): HTMLElement | nul
   img.decoding = 'async';
   img.draggable = false;
   return img;
+}
+
+type EmbedMedia = Extract<Slide['media'], { kind: 'embed' }>;
+
+/**
+ * A player from another site, lazy: the poster and a play button until clicked, then the iframe
+ * (which plays with sound, since the click allows it). Changing slide removes it, which stops it.
+ */
+function embedElement(media: EmbedMedia, still: string | null): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'viewer-embed';
+  if (still) {
+    const img = document.createElement('img');
+    img.src = still;
+    img.alt = '';
+    img.decoding = 'async';
+    img.draggable = false;
+    wrap.append(img);
+  }
+  const play = document.createElement('button');
+  play.type = 'button';
+  play.className = 'embed-play display';
+  play.dataset.cursor = 'word';
+  play.dataset.cursorWords = 'Play';
+  play.setAttribute('aria-label', `Play video: ${media.title}`);
+  play.innerHTML = '<span class="embed-play-icon" aria-hidden="true"></span><span>Play</span>';
+  // The frame's own click steps slides, so the play click stops here.
+  play.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const iframe = document.createElement('iframe');
+    iframe.src = media.src;
+    iframe.title = media.title;
+    iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+    wrap.classList.add('is-playing');
+    wrap.replaceChildren(iframe);
+    iframe.focus();
+  });
+  wrap.append(play);
+  return wrap;
 }
 
 /** Resolves once the image can be drawn (or has failed, in which case the sweep draws nothing). */

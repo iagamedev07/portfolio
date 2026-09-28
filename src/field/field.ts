@@ -7,74 +7,52 @@ import {
   type Section,
   type SectionId,
 } from '../content';
-import { ease, prefersReducedMotion } from '../motion/tokens';
+import { cancelScramble, scrambleText } from '../motion/scramble';
+import { ease, MOBILE_QUERY, prefersReducedMotion } from '../motion/tokens';
 import { formatRoute, onRouteChange } from '../router';
 import { renderCard } from './card';
-import {
-  autoSpeed,
-  cardSize,
-  CUBE_WIRES,
-  cubeLatLon,
-  dirFromLatLon,
-  faceFront,
-  fibonacciLatLon,
-  fieldRadius,
-  lerpLatLon,
-  shortestDeg,
-  sphereWires,
-  wireAngles,
-  type LatLon,
-  type Vec3,
-} from './geometry';
+import { angleDelta, HOT_SCALE, ringLayout, ringSlot, type RingLayout } from './ring';
 import './field.css';
 
-const DRAG_DEG_PER_PX = 0.25;
-const TILT_LIMIT = 70;
-const START_TILT = -8;
-const MAX_VELOCITY = 5; // degrees per 60 fps frame
-const FRICTION = 0.945; // per 60 fps frame
+// The orbit field (docs/interactions.md, "Orbit field"): a section's projects ride a ring around
+// its name, turning clockwise all the time with their clips playing. Hovering a card lifts it and
+// greys the rest, and the name in the middle scrambles into the project's. Wheel and drag spin
+// the ring; it never stops turning.
+
+const AUTO_SPEED = (Math.PI * 2) / 70; // radians per second: one lap every 70 s
+const WHEEL_RAD_PER_PX = 0.0012;
+const MAX_SPIN = 2.4; // extra radians per second from wheel or a flick
+const FRICTION = 0.955; // spin kept per 60 fps frame
+const LIFT_RATE = 0.16; // share of the way to the target per 60 fps frame
 // Movement before a press counts as a drag (and stops being a click). Fingers wobble more than mice.
-const DRAG_THRESHOLD = { mouse: 2, touch: 10 };
-const Z_SPIN_SHARE = 0.62;
-const CARD_BASE = 170;
-const CARD_ASPECT = 16 / 9;
-const MORPH_S = 0.9;
-const FOCUS_TURN_S = 0.6;
+const DRAG_THRESHOLD = { mouse: 3, touch: 10 };
+const RAIL_RESERVE = 230; // keeps the ring clear of the pill rail on desktop
+const SCRAMBLE_MS = 380;
 const SWITCH_S = 0.85;
 const SWITCH_OVERLAP_S = 0.35;
 
 interface CardNode {
-  el: HTMLElement;
+  el: HTMLAnchorElement;
   slug: string;
-  sphere: LatLon;
-  cube: LatLon;
-  now: LatLon;
-  depth: number;
+  name: string;
+  video: HTMLVideoElement | null;
+  /** 0 resting, 1 fully lifted (hovered or focused). */
+  lift: number;
 }
 
 interface Scene {
   section: SectionId;
   root: HTMLElement;
-  world: HTMLElement;
   emblem: HTMLElement;
-  emblemChars: number;
+  label: string;
   nodes: CardNode[];
-  wires: HTMLElement[];
-  grid: Array<[Vec3, Vec3]>;
-  radius: number;
-  shape: 'sphere' | 'cube';
-  /** 0 = sphere grid, 1 = cube edges. */
-  wireMix: number;
-  morph: gsap.core.Tween | null;
+  ring: RingLayout;
+  hot: CardNode | null;
 }
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-const lerp3 = (a: Vec3, b: Vec3, t: number): Vec3 => [
-  a[0] + (b[0] - a[0]) * t,
-  a[1] + (b[1] - a[1]) * t,
-  a[2] + (b[2] - a[2]) * t,
-];
-const scale3 = (v: Vec3, s: number): Vec3 => [v[0] * s, v[1] * s, v[2] * s];
+/** One word per line, like the section names. */
+const stack = (text: string) => text.split(' ').join('\n');
 
 /** What the viewer needs from the field while a project is open over it. */
 export interface Field {
@@ -90,24 +68,25 @@ export interface Field {
 
 export function mountField(stage: HTMLElement): Field {
   const reduce = prefersReducedMotion();
-  const touch = window.matchMedia('(hover: none)').matches;
-  const rot = { x: START_TILT, y: 0, z: 0 };
-  let vx = 0;
-  let vy = 0;
+  const phone = window.matchMedia(MOBILE_QUERY);
   let current: Scene | null = null;
   let shown: SectionId | null | undefined; // undefined until the first route arrives
-  let dragging = false;
-  let dragged = false;
-  let focusLock = false;
-  let downX = 0;
-  let downY = 0;
-  let lastX = 0;
-  let lastY = 0;
+  let active = true;
+  let turn = 0;
+  let spin = 0;
   let raf = 0;
   let last = 0;
   let resizeTimer = 0;
-  let active = true;
+  // Pointer: drag state, and where the mouse is for hover hit-testing as cards slide under it.
+  let dragging = false;
+  let dragged = false;
   let threshold = DRAG_THRESHOLD.mouse;
+  let downX = 0;
+  let downY = 0;
+  let lastAngle = 0;
+  let lastMoveAt = 0;
+  let dragVelocity = 0;
+  let mouse: { x: number; y: number } | null = null;
 
   const buildScene = (section: Section): Scene => {
     const root = document.createElement('div');
@@ -115,19 +94,17 @@ export function mountField(stage: HTMLElement): Field {
     root.setAttribute('role', 'group');
     root.setAttribute('aria-label', `${section.label} projects`);
 
-    const world = document.createElement('div');
-    world.className = 'field-world';
+    const label = stack(section.emblem ?? section.label);
     const emblem = document.createElement('p');
     emblem.className = 'field-emblem display';
     emblem.setAttribute('aria-hidden', 'true');
-    const words = (section.emblem ?? section.label).split(' ');
-    emblem.textContent = words.join('\n');
-    world.append(emblem);
+    emblem.textContent = label;
+    root.append(emblem);
 
     const projects = section.projects
       .map((slug) => getProject(slug))
       .filter((p): p is Project => p !== undefined);
-    const nodes = projects.map((project, i): CardNode => {
+    const nodes = projects.map((project): CardNode => {
       const href = formatRoute({
         view: 'viewer',
         section: section.id,
@@ -135,89 +112,125 @@ export function mountField(stage: HTMLElement): Field {
         slide: 0,
       });
       const el = renderCard(project, href);
-      world.append(el);
-      const sphere = fibonacciLatLon(i, projects.length);
-      return { el, slug: project.slug, sphere, cube: cubeLatLon(i), now: sphere, depth: 1 };
+      root.append(el);
+      return {
+        el,
+        slug: project.slug,
+        name: stack(project.name),
+        video: el.querySelector('video'),
+        lift: 0,
+      };
     });
 
-    const grid = sphereWires(projects.length);
-    const wires = Array.from({ length: Math.max(grid.length, CUBE_WIRES.length) }, () => {
-      const wire = document.createElement('div');
-      wire.className = 'field-wire';
-      world.prepend(wire);
-      return wire;
-    });
-
-    root.append(world);
+    const touch = window.matchMedia('(hover: none)').matches;
     root.insertAdjacentHTML(
       'beforeend',
-      `<p class="field-hint is-left" aria-hidden="true">Drag to rotate</p>
+      `<p class="field-hint is-left" aria-hidden="true">Scroll or drag to spin</p>
        <p class="field-hint is-right" aria-hidden="true">${touch ? 'Tap' : 'Click'} a project to open it</p>`,
     );
 
     return {
       section: section.id,
       root,
-      world,
       emblem,
-      emblemChars: Math.max(...words.map((word) => word.length)),
+      label,
       nodes,
-      wires,
-      grid,
-      radius: 0,
-      shape: 'sphere',
-      wireMix: 0,
-      morph: null,
+      ring: ringLayout(nodes.length, 1, 1),
+      hot: null,
     };
   };
 
-  const placeNodes = (scene: Scene) => {
-    for (const node of scene.nodes) {
-      node.el.style.transform = `rotateY(${node.now.lon}rad) rotateX(${-node.now.lat}rad) translateZ(${scene.radius * node.depth}px)`;
-    }
-  };
-
-  const placeWires = (scene: Scene) => {
-    const { grid, wireMix: mix, radius: r } = scene;
-    scene.wires.forEach((wire, i) => {
-      // Mid-morph every grid line converges on a cube edge; the extras fade as they stack up.
-      const edge = CUBE_WIRES[i % CUBE_WIRES.length]!;
-      const line = grid[i] ?? edge;
-      const a = scale3(lerp3(line[0], edge[0], mix), r);
-      const b = scale3(lerp3(line[1], edge[1], mix), r);
-      const { length, yaw, roll } = wireAngles(a, b);
-      wire.style.width = `${length}px`;
-      wire.style.transform = `translate3d(${a[0]}px, ${a[1]}px, ${a[2]}px) rotateY(${yaw}deg) rotateZ(${roll}deg)`;
-      wire.style.opacity = i < CUBE_WIRES.length ? '1' : String(1 - mix);
-    });
-  };
+  // ---------- layout and placement ----------
 
   const layoutScene = (scene: Scene) => {
     const w = stage.clientWidth;
     const h = stage.clientHeight;
-    const n = scene.nodes.length;
-    scene.radius = fieldRadius(n, w, h);
-    const base = CARD_BASE * clamp(Math.min(w, h) / 900, 0.55, 1);
-    scene.nodes.forEach((node, i) => {
-      const size = cardSize(i, n, base, CARD_ASPECT);
-      node.depth = size.depth;
-      node.el.style.width = `${size.w}px`;
-      node.el.style.height = `${size.h}px`;
-      node.el.style.margin = `${-size.h / 2}px 0 0 ${-size.w / 2}px`;
+    const ring = ringLayout(scene.nodes.length, w, h, {
+      reserveX: phone.matches ? 0 : RAIL_RESERVE,
     });
-    const emblemSize = Math.min(
-      scene.radius * 0.3,
-      (scene.radius * 1.8) / (scene.emblemChars * 0.9),
-    );
-    scene.emblem.style.fontSize = `${Math.round(emblemSize)}px`;
-    placeNodes(scene);
-    placeWires(scene);
+    scene.ring = ring;
+    for (const node of scene.nodes) {
+      node.el.style.width = `${ring.w}px`;
+      node.el.style.height = `${ring.h}px`;
+      node.el.style.margin = `${-ring.h / 2}px 0 0 ${-ring.w / 2}px`;
+    }
+    sizeEmblem(scene);
+    place(scene);
   };
 
-  const render = (scene: Scene) => {
-    scene.world.style.transform = `rotateX(${rot.x}deg) rotateY(${rot.y}deg) rotateZ(${rot.z}deg)`;
-    scene.emblem.style.transform = `translate(-50%, -50%) rotateZ(${-rot.z}deg) rotateY(${-rot.y}deg) rotateX(${-rot.x}deg)`;
+  /** One font size for the section name and every project name, so hovering never jumps. */
+  const sizeEmblem = (scene: Scene) => {
+    const { emblem, ring } = scene;
+    cancelScramble(emblem);
+    emblem.style.fontSize = '100px';
+    let widest = 1;
+    let tallest = 1;
+    for (const text of [scene.label, ...scene.nodes.map((node) => node.name)]) {
+      emblem.textContent = text;
+      widest = Math.max(widest, emblem.offsetWidth);
+      tallest = Math.max(tallest, emblem.offsetHeight);
+    }
+    const size = clamp(100 * Math.min(ring.innerW / widest, ring.innerH / tallest), 14, 160);
+    emblem.style.fontSize = `${Math.floor(size)}px`;
+    emblem.textContent = scene.hot?.name ?? scene.label;
   };
+
+  const place = (scene: Scene) => {
+    const { nodes, ring } = scene;
+    nodes.forEach((node, i) => {
+      const slot = ringSlot(i, nodes.length, turn, ring.rx, ring.ry);
+      const scale = slot.scale * (1 + (HOT_SCALE - 1) * node.lift);
+      node.el.style.transform = `translate3d(${slot.x.toFixed(2)}px, ${slot.y.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
+      // Front of the ring over the back; a lifted card over everything.
+      node.el.style.zIndex = String(
+        node.lift > 0.01 ? 1000 + Math.round(node.lift * 100) : Math.round((slot.depth + 1) * 100),
+      );
+    });
+  };
+
+  // ---------- hover / focus ----------
+
+  const setHot = (scene: Scene, node: CardNode | null) => {
+    if (scene.hot === node) return;
+    scene.hot?.el.classList.remove('is-hot');
+    scene.hot = node;
+    node?.el.classList.add('is-hot');
+    scene.root.classList.toggle('has-hot', node !== null);
+    scrambleText(scene.emblem, node?.name ?? scene.label, SCRAMBLE_MS);
+  };
+
+  const nodeFor = (target: EventTarget | Element | null): CardNode | undefined => {
+    const card = target instanceof Element ? target.closest('.card') : null;
+    return card ? current?.nodes.find((node) => node.el === card) : undefined;
+  };
+
+  /** The card under a still mouse changes as the ring turns, so hit-test every frame. */
+  const trackHover = (scene: Scene) => {
+    const focused = scene.nodes.find((node) => node.el.matches(':focus-visible'));
+    if (focused) return setHot(scene, focused);
+    if (!mouse || !active) return setHot(scene, null);
+    const hit = nodeFor(document.elementFromPoint(mouse.x, mouse.y));
+    setHot(scene, hit ?? null);
+  };
+
+  // ---------- clips ----------
+
+  const setPlaying = (scene: Scene, on: boolean) => {
+    for (const { video } of scene.nodes) {
+      if (!video) continue;
+      if (on && !reduce)
+        video.play().catch(() => undefined); // autoplay refused: the poster stays
+      else video.pause();
+    }
+  };
+
+  const shouldPlay = () => active && document.visibilityState === 'visible';
+
+  document.addEventListener('visibilitychange', () => {
+    if (current) setPlaying(current, shouldPlay());
+  });
+
+  // ---------- the loop ----------
 
   const tick = (now: number) => {
     raf = 0;
@@ -226,18 +239,22 @@ export function mountField(stage: HTMLElement): Field {
       last = 0;
       return;
     }
-    const k = last ? Math.min((now - last) * 0.06, 3) : 1; // elapsed time in 60 fps frames
+    const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
+    const frames = dt * 60;
     last = now;
-    if (active && !dragging && !focusLock && !reduce) {
-      const auto = autoSpeed(scene.nodes.length);
-      rot.y += (auto + vy) * k;
-      rot.z += auto * Z_SPIN_SHARE * k;
-      rot.x = clamp(rot.x + vx * k, -TILT_LIMIT, TILT_LIMIT);
-      const decay = Math.pow(FRICTION, k);
-      vx = Math.abs(vx * decay) < 0.002 ? 0 : vx * decay;
-      vy = Math.abs(vy * decay) < 0.002 ? 0 : vy * decay;
+    if (active && !dragging && !reduce) {
+      turn += (AUTO_SPEED + spin) * dt;
+      spin *= Math.pow(FRICTION, frames);
+      if (Math.abs(spin) < 0.001) spin = 0;
     }
-    render(scene);
+    trackHover(scene);
+    const step = reduce ? 1 : 1 - Math.pow(1 - LIFT_RATE, frames);
+    for (const node of scene.nodes) {
+      const target = node === scene.hot ? 1 : 0;
+      node.lift += (target - node.lift) * step;
+      if (Math.abs(target - node.lift) < 0.001) node.lift = target;
+    }
+    place(scene);
     raf = requestAnimationFrame(tick);
   };
 
@@ -245,46 +262,13 @@ export function mountField(stage: HTMLElement): Field {
     if (!raf) raf = requestAnimationFrame(tick);
   };
 
-  const morph = (scene: Scene) => {
-    if (reduce || scene.morph) return;
-    const to = scene.shape === 'sphere' ? 'cube' : 'sphere';
-    const from = scene.nodes.map((node) => node.now);
-    const progress = { t: 0 };
-    scene.morph = gsap.to(progress, {
-      t: 1,
-      duration: MORPH_S,
-      ease: 'power2.inOut', // easeInOutCubic
-      onUpdate: () => {
-        scene.nodes.forEach((node, i) => {
-          node.now = lerpLatLon(from[i]!, to === 'cube' ? node.cube : node.sphere, progress.t);
-        });
-        scene.wireMix = to === 'cube' ? progress.t : 1 - progress.t;
-        placeNodes(scene);
-        placeWires(scene);
-      },
-      onComplete: () => {
-        scene.shape = to;
-        scene.morph = null;
-      },
-    });
-  };
-
-  const turnToFront = (node: CardNode) => {
-    focusLock = true;
-    vx = 0;
-    vy = 0;
-    const target = faceFront(dirFromLatLon(node.now), rot.z);
-    const x = clamp(target.rx, -TILT_LIMIT, TILT_LIMIT);
-    const y = rot.y + shortestDeg(target.ry - rot.y);
-    gsap.killTweensOf(rot);
-    if (reduce) Object.assign(rot, { x, y });
-    else gsap.to(rot, { x, y, duration: FOCUS_TURN_S, ease: ease.out });
-  };
+  // ---------- switching sections ----------
 
   const order = (id: SectionId) => sections.findIndex((s) => s.id === id);
 
   const destroy = (scene: Scene) => {
-    scene.morph?.kill();
+    setPlaying(scene, false);
+    cancelScramble(scene.emblem);
     gsap.killTweensOf(scene.root);
     scene.root.remove();
   };
@@ -293,12 +277,11 @@ export function mountField(stage: HTMLElement): Field {
     const from = current;
     const next = section ? buildScene(section) : null;
     current = next;
-    focusLock = false;
     if (next) {
       stage.append(next.root);
       next.root.inert = !active;
       layoutScene(next);
-      render(next);
+      setPlaying(next, shouldPlay());
       wake();
     }
 
@@ -306,6 +289,7 @@ export function mountField(stage: HTMLElement): Field {
     const motion = animate && !reduce;
     if (from) {
       from.root.inert = true;
+      setPlaying(from, false);
       gsap.killTweensOf(from.root);
       if (!motion) destroy(from);
       else {
@@ -342,7 +326,25 @@ export function mountField(stage: HTMLElement): Field {
     show(id && section ? section : null, !first);
   });
 
-  // ---------- drag with inertia ----------
+  // ---------- wheel and drag spin the ring ----------
+
+  stage.addEventListener(
+    'wheel',
+    (e) => {
+      if (!current || !active) return;
+      const px = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      spin = clamp(spin + px * WHEEL_RAD_PER_PX, -MAX_SPIN, MAX_SPIN);
+    },
+    { passive: true },
+  );
+
+  /** Angle of a point around the ring's centre (clockwise-positive, since y points down). */
+  const angleAt = (x: number, y: number) => {
+    const box = stage.getBoundingClientRect();
+    const dx = x - (box.left + box.width / 2);
+    const dy = y - (box.top + box.height / 2);
+    return { angle: Math.atan2(dy, dx), dist: Math.hypot(dx, dy) };
+  };
 
   stage.addEventListener('pointerdown', (e) => {
     const scene = current;
@@ -351,12 +353,12 @@ export function mountField(stage: HTMLElement): Field {
     }
     dragging = true;
     dragged = false;
-    focusLock = false;
-    vx = 0;
-    vy = 0;
-    gsap.killTweensOf(rot);
-    downX = lastX = e.clientX;
-    downY = lastY = e.clientY;
+    spin = 0;
+    dragVelocity = 0;
+    downX = e.clientX;
+    downY = e.clientY;
+    lastAngle = angleAt(e.clientX, e.clientY).angle;
+    lastMoveAt = e.timeStamp;
     threshold = e.pointerType === 'mouse' ? DRAG_THRESHOLD.mouse : DRAG_THRESHOLD.touch;
     scene.root.classList.add('is-grabbing');
   });
@@ -364,35 +366,45 @@ export function mountField(stage: HTMLElement): Field {
   window.addEventListener(
     'pointermove',
     (e) => {
-      if (!dragging) return;
-      if (!dragged && Math.hypot(e.clientX - downX, e.clientY - downY) > threshold) {
-        dragged = true;
+      if (e.pointerType === 'mouse') {
+        const box = stage.getBoundingClientRect();
+        const inside =
+          e.clientX >= box.left &&
+          e.clientX <= box.right &&
+          e.clientY >= box.top &&
+          e.clientY <= box.bottom;
+        mouse = inside ? { x: e.clientX, y: e.clientY } : null;
       }
-      const stepY = (e.clientX - lastX) * DRAG_DEG_PER_PX;
-      const stepX = -(e.clientY - lastY) * DRAG_DEG_PER_PX;
-      rot.y += stepY;
-      rot.x = clamp(rot.x + stepX, -TILT_LIMIT, TILT_LIMIT);
-      vy = vy * 0.7 + stepY * 0.3;
-      vx = vx * 0.7 + stepX * 0.3;
-      lastX = e.clientX;
-      lastY = e.clientY;
+      if (!dragging) return;
+      if (!dragged && Math.hypot(e.clientX - downX, e.clientY - downY) > threshold) dragged = true;
+      const { angle, dist } = angleAt(e.clientX, e.clientY);
+      if (dist < 24) return; // too close to the middle to read a direction
+      const delta = angleDelta(lastAngle, angle);
+      const seconds = Math.max((e.timeStamp - lastMoveAt) / 1000, 1 / 240);
+      turn += delta;
+      dragVelocity = dragVelocity * 0.7 + (delta / seconds) * 0.3;
+      lastAngle = angle;
+      lastMoveAt = e.timeStamp;
     },
     { passive: true },
   );
 
-  const release = () => {
+  const release = (e: PointerEvent) => {
     if (!dragging) return;
     dragging = false;
     current?.root.classList.remove('is-grabbing');
-    vx = reduce ? 0 : clamp(vx, -MAX_VELOCITY, MAX_VELOCITY);
-    vy = reduce ? 0 : clamp(vy, -MAX_VELOCITY, MAX_VELOCITY);
-    if (dragged && current) morph(current);
+    // A flick carries on; holding still before letting go doesn't.
+    const stale = e.timeStamp - lastMoveAt > 80;
+    spin = reduce || stale ? 0 : clamp(dragVelocity - AUTO_SPEED, -MAX_SPIN, MAX_SPIN);
     window.setTimeout(() => {
       dragged = false;
     }, 0);
   };
   window.addEventListener('pointerup', release);
   window.addEventListener('pointercancel', release);
+  document.documentElement.addEventListener('pointerleave', () => {
+    mouse = null;
+  });
 
   stage.addEventListener(
     'click',
@@ -404,16 +416,6 @@ export function mountField(stage: HTMLElement): Field {
     true,
   );
   stage.addEventListener('dragstart', (e) => e.preventDefault());
-
-  stage.addEventListener('focusin', (e) => {
-    const card = e.target instanceof HTMLElement ? e.target.closest<HTMLElement>('.card') : null;
-    const node = card ? current?.nodes.find((n) => n.el === card) : undefined;
-    if (node && card?.matches(':focus-visible')) turnToFront(node);
-  });
-  stage.addEventListener('focusout', (e) => {
-    const next = e.relatedTarget;
-    if (!(next instanceof Element && next.closest('.card'))) focusLock = false;
-  });
 
   window.addEventListener('resize', () => {
     window.clearTimeout(resizeTimer);
@@ -433,7 +435,9 @@ export function mountField(stage: HTMLElement): Field {
     },
     setActive(next) {
       active = next;
-      if (current) current.root.inert = !next;
+      if (!current) return;
+      current.root.inert = !next;
+      setPlaying(current, shouldPlay());
     },
     focusCard(slug) {
       const node = findNode(slug);
