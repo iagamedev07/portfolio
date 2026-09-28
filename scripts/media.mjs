@@ -25,20 +25,22 @@ const { values, positionals } = parseArgs({
     width: { type: 'string', default: '1280' },
     fps: { type: 'string', default: '30' },
     poster: { type: 'string', default: '0' },
+    audio: { type: 'boolean', default: false },
     help: { type: 'boolean', short: 'h' },
   },
 });
 
 const [input, name] = positionals;
 if (values.help || !input || !name) {
-  console.log(`Usage: npm run media -- <input> <name> [--start s] [--duration s] [--width px] [--fps n] [--poster s]
+  console.log(`Usage: npm run media -- <input> <name> [--start s] [--duration s] [--width px] [--fps n] [--poster s] [--audio]
 
   <input>   a video (mp4, mov, mkv...) or an image
   <name>    output folder under public/media, lowercase with dashes, e.g. pixel-sandbox/chunks
 
   Video: --start and --duration pick the loop (defaults 0 and 6 s), --width caps the size
   (default 1280, never upscales), --fps defaults to 30,
-  --poster picks the poster frame in seconds into the loop (default 0).`);
+  --poster picks the poster frame in seconds into the loop (default 0),
+  --audio keeps the sound (slides then get a sound on/off button; clips are silent without it).`);
   process.exit(values.help ? 0 : 1);
 }
 if (!existsSync(input)) fail(`Can't find ${input}`);
@@ -71,7 +73,8 @@ if (IMAGE_TYPES.has(extname(input).toLowerCase())) {
   height: ${size.height},
 }`);
 } else {
-  const trim = ['-ss', values.start, '-t', values.duration, '-i', input, '-an'];
+  const trim = ['-ss', values.start, '-t', values.duration, '-i', input];
+  const sound = (codec) => (values.audio ? args(codec) : ['-an']);
   const filters = ['-vf', `${scale},fps=${values.fps}`];
   const webm = join(outDir, 'clip.webm');
   const mp4 = join(outDir, 'clip.mp4');
@@ -82,6 +85,7 @@ if (IMAGE_TYPES.has(extname(input).toLowerCase())) {
     ...trim,
     ...filters,
     ...args('-c:v libvpx-vp9 -b:v 0 -crf 38 -row-mt 1 -deadline good -cpu-used 2'),
+    ...sound('-c:a libopus -b:a 96k'),
     webm,
   ]);
   console.log('Encoding mp4 (H.264)...');
@@ -89,6 +93,7 @@ if (IMAGE_TYPES.has(extname(input).toLowerCase())) {
     ...trim,
     ...filters,
     ...args('-c:v libx264 -preset slow -crf 26 -pix_fmt yuv420p -movflags +faststart'),
+    ...sound('-c:a aac -b:a 128k'),
     mp4,
   ]);
   console.log('Grabbing the poster...');
@@ -103,7 +108,7 @@ if (IMAGE_TYPES.has(extname(input).toLowerCase())) {
   mp4: asset('${name}/clip.mp4'),
   poster: asset('${name}/poster.jpg'),
   alt: 'TODO: what the clip shows',
-  aspect: ${size.width} / ${size.height},
+  aspect: ${size.width} / ${size.height},${values.audio ? '\n  audio: true,' : ''}
 }`);
 }
 

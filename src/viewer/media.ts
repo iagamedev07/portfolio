@@ -39,8 +39,17 @@ export function slideStill(project: Project, index: number): string | null {
   }
 }
 
+/** Whether the visitor has turned slide sound on. Shared across slides; the viewer resets it on close. */
+export interface SoundState {
+  on: boolean;
+}
+
 /** The element shown large in the viewer: a looping clip for video, otherwise the still. */
-export function mediaElement(project: Project, index: number): HTMLElement | null {
+export function mediaElement(
+  project: Project,
+  index: number,
+  sound: SoundState = { on: false },
+): HTMLElement | null {
   const slide = project.slides[index];
   if (!slide) return null;
   if (slide.media.kind === 'video') {
@@ -61,6 +70,8 @@ export function mediaElement(project: Project, index: number): HTMLElement | nul
       source.type = type;
       video.append(source);
     }
+    // Reduced motion shows the native controls, which have their own volume.
+    if (slide.media.audio && !prefersReducedMotion()) return withSoundToggle(video, sound);
     return video;
   }
   const still = slideStill(project, index);
@@ -72,6 +83,52 @@ export function mediaElement(project: Project, index: number): HTMLElement | nul
   img.decoding = 'async';
   img.draggable = false;
   return img;
+}
+
+const SPEAKER =
+  '<svg class="sound-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="sound-waves" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+
+/**
+ * A clip with sound: it starts muted (browsers won't autoplay sound), with a button to turn sound
+ * on. Once on, it stays on for the next slides with sound until the viewer closes.
+ */
+function withSoundToggle(video: HTMLVideoElement, sound: SoundState): HTMLElement {
+  const wrap = document.createElement('div');
+  wrap.className = 'viewer-sound';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'sound-toggle display';
+  button.dataset.cursor = 'small';
+  const show = () => {
+    video.muted = !sound.on;
+    wrap.classList.toggle('is-on', sound.on);
+    button.setAttribute('aria-pressed', String(sound.on));
+    button.setAttribute('aria-label', 'Sound');
+    button.innerHTML = `${SPEAKER}<span>${sound.on ? 'Sound off' : 'Sound on'}</span>`;
+  };
+  // The frame's own click steps slides, so the button's click stops here.
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sound.on = !sound.on;
+    show();
+    if (video.paused) video.play().catch(() => undefined);
+  });
+  // Sound already on from an earlier slide: if the browser refuses to autoplay it, fall back to muted.
+  video.addEventListener(
+    'loadeddata',
+    () => {
+      if (!video.paused) return;
+      video.play().catch(() => {
+        sound.on = false;
+        show();
+        video.play().catch(() => undefined);
+      });
+    },
+    { once: true },
+  );
+  show();
+  wrap.append(video, button);
+  return wrap;
 }
 
 type EmbedMedia = Extract<Slide['media'], { kind: 'embed' }>;

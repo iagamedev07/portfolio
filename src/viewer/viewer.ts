@@ -15,6 +15,7 @@ import {
   pad,
   slideAspect,
   slideStill,
+  type SoundState,
 } from './media';
 import { createStrip } from './strip';
 import { sweepReveal } from './sweep';
@@ -119,6 +120,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
   let busy = false;
   let pending: Route | null = null;
   let lastRoute: Route | null = null;
+  const sound: SoundState = { on: false };
 
   const strip = createStrip((index) => go(index));
   root.insertBefore(strip.el, closeButton);
@@ -130,7 +132,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     root.classList.toggle('is-text-only', isTextOnly(s));
     root.classList.toggle('is-single', p.slides.length < 2);
     media.style.setProperty('--aspect', String(slideAspect(s)));
-    const element = mediaElement(p, i);
+    const element = mediaElement(p, i, sound);
     shot.replaceChildren(...(element ? [element] : []));
     // The offset card behind is the next slide, like a stack of prints.
     const behind = slideStill(p, (i + 1) % p.slides.length);
@@ -313,6 +315,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     const p = project;
     if (!p) return;
     busy = true;
+    sound.on = false; // the next visit starts muted again
     const returnFocus =
       root.contains(document.activeElement) || document.activeElement === document.body;
     text.classList.remove('is-shown');
@@ -463,8 +466,8 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     if (!reduce) {
       frame.style.transform = `perspective(760px) rotateX(${((0.5 - py) * 2 * MAX_TILT).toFixed(2)}deg) rotateY(${((px - 0.5) * 2 * MAX_TILT).toFixed(2)}deg) scale(1.04)`;
     }
-    // Over an embed's play button the click plays, so the prev/next disc steps aside.
-    if (e.target instanceof Element && e.target.closest('.embed-play')) hideDisc();
+    // Over an embed's play button or the sound button the click is theirs, so the disc steps aside.
+    if (e.target instanceof Element && e.target.closest('.embed-play, .sound-toggle')) hideDisc();
     else showDisc(e.clientX, e.clientY, px < 0.5 ? -1 : 1);
   });
   frame.addEventListener('pointerleave', () => {

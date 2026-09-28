@@ -2,14 +2,18 @@ import { asset } from './assets';
 import { youtube, youtubePlaylist, youtubeUrl } from './embeds';
 import type { Media, Project, Slide, SlideLink } from './types';
 
-/** A silent 16:9 loop encoded by `npm run media` into public/media/<folder>/. */
-const clip = (folder: string, alt: string): Media => ({
+/**
+ * A 16:9 loop encoded by `npm run media` into public/media/<folder>/. Silent unless it was
+ * encoded with --audio and marked `{ audio: true }` here.
+ */
+const clip = (folder: string, alt: string, { audio = false } = {}): Media => ({
   kind: 'video',
   webm: asset(`${folder}/clip.webm`),
   mp4: asset(`${folder}/clip.mp4`),
   poster: asset(`${folder}/poster.jpg`),
   alt,
   aspect: 16 / 9,
+  audio,
 });
 
 // Card cover: the loop that plays on the ring (npm run media -- <clip> <slug>/cover --width 640).
@@ -31,6 +35,16 @@ const devlog = (id: string): SlideLink => ({
 
 const STEAM_WATCH = 'https://store.steampowered.com/app/2674670/THE_WATCH/';
 const PIXEL_PLAYLIST = 'PLRQFHzjPGrTD8yE31w0AuH_8ISHLlhNjJ';
+const PLAY_LARRY: SlideLink = {
+  label: 'Play on itch.io',
+  href: 'https://aeroblizz.itch.io/larrys-prophecy',
+  icon: 'itch',
+};
+const PLAY_LATTICE: SlideLink = {
+  label: 'Play on itch.io',
+  href: 'https://aeroblizz.itch.io/lattice',
+  icon: 'itch',
+};
 
 export const projects: Project[] = [
   {
@@ -338,7 +352,58 @@ export const projects: Project[] = [
       'lattice',
       'Shapes built from points and triangles, ending on a small island scene',
     ),
-    slides: [todo('Runtime modelling', ['Unity, itch.io']), todo('Solo production')],
+    slides: [
+      {
+        title: 'The Game',
+        description:
+          'LATTICE is a small sandbox game where you build 3D models out of points. You place points, connect them into triangles and quads, and colour each face.\n\nIt’s half game, half creative tool. I made it solo and put it out on itch.io.',
+        meta: ['Unity · C# · Runtime geometry', 'Solo project · Released on itch.io · Windows'],
+        media: youtube('Z3LCcbLtMuQ', 'Project LATTICE, official trailer'),
+        links: [PLAY_LATTICE],
+      },
+      {
+        title: 'Building Geometry',
+        description:
+          'You click to place points, and when you close a shape it becomes a face. Pick a colour for it and carry on. That’s the whole loop.\n\nThere are no ready-made models in the game. The mesh is generated at runtime from the points you place, so everything on screen is something you built.',
+        meta: ['Place points → Close a face → Colour it → Repeat', 'Runtime mesh generation'],
+        media: clip(
+          'lattice/building',
+          'Low-poly models built from points: an island, an impossible triangle and pixel characters',
+        ),
+      },
+      {
+        title: 'Tools & Accessibility',
+        description:
+          'When you build something point by point, you’re going to make mistakes, so undo was a must. There’s also a colour palette, so you’re not hunting for the same colours again and again.\n\nI kept the UI grey and simple, so it’s easy to pick up even if you’ve never touched a 3D tool.',
+        meta: ['Undo · Colour palette · Simple UI'],
+        media: clip(
+          'lattice/tools',
+          'Picking colours from the picker and palettes, then the settings menus',
+        ),
+      },
+      {
+        title: 'Feel & Sound',
+        description:
+          'I wanted it to feel calm to play. The sound effects are soft and glassy, a bit psychedelic, and I made all of them myself, along with the music.\n\nThe UI is grey on purpose, so the only colourful thing on screen is what you’re making.',
+        meta: ['Sound design · Original music', 'Audio built in FMOD'],
+        media: clip(
+          'lattice/feel',
+          'The audio settings menu, the FMOD Studio session for the game’s sounds, then a calm build',
+          { audio: true },
+        ),
+        links: [
+          { label: 'Listen to the soundtrack', href: youtubeUrl('1MyziwwPkHA'), icon: 'youtube' },
+        ],
+      },
+      {
+        title: 'See It in Action',
+        description:
+          'The devlog shows the full game and how I made it. If you want to try it yourself, it’s on itch.io.',
+        meta: [],
+        media: youtube('D2bgSBmaRpk', 'Project LATTICE devlog'),
+        links: [PLAY_LATTICE],
+      },
+    ],
   },
   {
     slug: 'star-ballz',
@@ -353,7 +418,49 @@ export const projects: Project[] = [
       'larrys-prophecy',
       'Larry running through a torch-lit dungeon as a Mementor closes in',
     ),
-    slides: [todo("Larry's Prophecy")],
+    slides: [
+      {
+        title: 'The Game',
+        description:
+          'A small 2D platformer I made in about three weeks, a retro take on Hogwarts Legacy. You play as Larry, a wizard making his way through a dungeon with a handful of spells.\n\nIt’s a small project, but everything in it is mine: the code, the art, the animation and the sound.',
+        meta: ['Unity · C# · 2D platformer', 'Solo · made in about 3 weeks'],
+        media: clip(
+          'larrys-prophecy/cover',
+          'Larry running through a torch-lit dungeon as a Mementor closes in',
+        ),
+        links: [PLAY_LARRY],
+      },
+      {
+        title: 'Mechanics',
+        description:
+          'You fight your way through with four spells: a fire shot, an explosion, an instant kill with a long cooldown, and a heal.\n\nThere are goblins up close, wizards shooting from range, and Mementors that chase you across the map and kill you in one hit. And when you need to get somewhere fast, you can hop on a broom and fly.',
+        meta: ['4 spells · 3 enemy types · Broom flying'],
+        media: clip(
+          'larrys-prophecy/mechanics',
+          'Jumping, flying on a broom, casting fire and healing outside the castle, then the dungeon',
+          { audio: true },
+        ),
+      },
+      {
+        title: 'Game Feel, Art & Sound',
+        description:
+          'I spent a lot of time on how it feels to play. Jumps are variable, so holding the button takes you higher. There’s coyote time, so you can still jump a moment after running off a ledge. And the screen shakes on impacts.\n\nI drew the pixel art and animated it myself, and the sound runs through FMOD, same as LATTICE.',
+        meta: ['Variable jump · Coyote time · Screen shake', 'Pixel art · Animation · FMOD audio'],
+        media: clip(
+          'larrys-prophecy/art',
+          'Jump and impact tests, the FMOD session for the game’s sounds, and pixel-art tiles being painted',
+          { audio: true },
+        ),
+      },
+      {
+        title: 'More Info',
+        description:
+          'The devlog shows the whole game and how I made it. You can also play it on itch.io.',
+        meta: [],
+        media: youtube('Xtd3IvLmQ74', "Larry's Prophecy devlog"),
+        links: [PLAY_LARRY],
+      },
+    ],
   },
   { slug: 'prototypes', name: 'Prototypes', slides: [todo('Prototypes')] },
   {

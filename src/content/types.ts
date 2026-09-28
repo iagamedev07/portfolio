@@ -1,7 +1,16 @@
 export type SectionId = 'home' | 'experience' | 'projects' | 'more-work' | 'off-the-clock';
 
 export type Media =
-  | { kind: 'video'; webm: string; mp4: string; poster: string; alt: string; aspect?: number }
+  | {
+      kind: 'video';
+      webm: string;
+      mp4: string;
+      poster: string;
+      alt: string;
+      aspect?: number;
+      /** Has a sound track (npm run media --audio): the slide starts muted with a sound button. */
+      audio?: boolean;
+    }
   | { kind: 'image'; src: string; alt: string; width: number; height: number }
   /**
    * A player from another site (YouTube, Vimeo...). Shows its poster with a play button and only
@@ -17,7 +26,7 @@ export interface SlideLink {
   label: string;
   href: string;
   /** A logo before the label. */
-  icon?: 'steam' | 'epic' | 'youtube';
+  icon?: 'steam' | 'epic' | 'youtube' | 'itch';
 }
 
 /** A big number (or name) with a small caption, e.g. "100K+" / "Epic Games Store installs". */
