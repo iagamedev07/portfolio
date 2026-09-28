@@ -143,6 +143,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     const s = p.slides[i];
     if (!s) return;
     count.textContent = `${pad(i + 1)} / ${pad(p.slides.length)}`;
+    text.scrollTop = 0; // long write-ups scroll; each slide starts at its top
     title.dataset.full = s.title;
     desc.dataset.full = s.description;
     meta.innerHTML = s.meta.length
