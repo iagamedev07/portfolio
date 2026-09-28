@@ -26,6 +26,15 @@ const todo = (title: string, meta: string[] = []): Slide => ({
   media: { kind: 'placeholder' },
 });
 
+// A still image converted by `npm run media` (1280x720 webp).
+const still = (folder: string, alt: string): Media => ({
+  kind: 'image',
+  src: asset(`${folder}/image.webp`),
+  alt,
+  width: 1280,
+  height: 720,
+});
+
 // "Watch the devlog" button for a slide whose system has its own YouTube devlog.
 const devlog = (id: string): SlideLink => ({
   label: 'Watch the devlog',
@@ -38,6 +47,17 @@ const PIXEL_PLAYLIST = 'PLRQFHzjPGrTD8yE31w0AuH_8ISHLlhNjJ';
 const PLAY_LARRY: SlideLink = {
   label: 'Play on itch.io',
   href: 'https://aeroblizz.itch.io/larrys-prophecy',
+  icon: 'itch',
+};
+const RUNNER_PLAYLIST = 'PLRQFHzjPGrTCZjfx0CYOPxUO2bjKa_NkI';
+const PLAY_STICK: SlideLink = {
+  label: 'Play on itch.io',
+  href: 'https://aeroblizz.itch.io/stickexe',
+  icon: 'itch',
+};
+const PLAY_MONKE: SlideLink = {
+  label: 'Play on itch.io',
+  href: 'https://aeroblizz.itch.io/monke-together-strong',
   icon: 'itch',
 };
 const PLAY_LATTICE: SlideLink = {
@@ -464,11 +484,166 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: 'stick-exe',
+    name: 'Stick.EXE',
+    cover: cover('stick-exe', 'A fake Windows desktop where things start going wrong'),
+    slides: [
+      {
+        title: 'The Game',
+        description:
+          'It started as an animation. I made a parody of Alan Becker’s Animation vs. Animator (which I loved as a kid), with a developer fighting a stickman inside Unity. Someone in the comments dared me to make it into a game, so I did.\n\nYou’re using Windows, something goes wrong, and it ends in a fight with a stickman. It was my first game with a proper storyline. There’s more lore to it, but I’ll let you find that yourself.',
+        meta: ['Unity · C# · Story game · PC, Mac', 'Solo'],
+        media: clip('stick-exe/game', 'A fake Windows desktop where things start going wrong'),
+        links: [PLAY_STICK],
+      },
+      {
+        title: 'Faking Windows',
+        description:
+          'The hardest part was rebuilding the Windows interface inside Unity and making it look believable. It took a lot of time. For the bits I couldn’t get quite right, I added custom error popups that fit the story. Not slacking, I promise.',
+        meta: [],
+        media: clip(
+          'stick-exe/windows',
+          'The fake Windows interface: start menu, apps and error popups',
+        ),
+      },
+      {
+        title: 'The Stickman',
+        description:
+          'The stickman isn’t just a boss waiting at the end. There are different ways to interact with him as the story goes on.',
+        meta: [],
+        media: still(
+          'stick-exe/stickman',
+          'The stickman loose on the desktop, throwing things around',
+        ),
+      },
+      {
+        title: 'More Info',
+        description:
+          'The devlog shows the whole game and how I made it. You can play it on itch.io.',
+        meta: [],
+        media: youtube('_bORyERX-04', 'Stick.EXE devlog'),
+        links: [PLAY_STICK],
+      },
+    ],
+  },
+  {
+    slug: 'bully-us',
+    name: 'Bully Us',
+    cover: cover('bully-us', 'Students running around the school in Bully Us'),
+    slides: [
+      {
+        title: 'The Game',
+        description:
+          'Among Us, but at school. I used to love playing Mafia, and Among Us felt like Mafia in space, so I wanted to make my own version.',
+        meta: ['Unity · C# · Online multiplayer', 'Solo · made in 3 weeks'],
+        media: clip('bully-us/game', 'Students running around the school in Bully Us'),
+      },
+      {
+        title: 'How It Plays',
+        description:
+          'Instead of impostors there are bullies. Their job is to sabotage the school by wrecking property and picking on other students. Everyone else does tasks and cleans up the mess, and the tasks are school stuff like playing the drums or solving maths problems.\n\nAt night a security guard patrols the school, and nobody wants to get caught. If he spots something, a meeting gets called and someone has to leave (don’t ask where).',
+        meta: ['Bullies · Sabotage · School tasks · Night guard'],
+        media: youtube('44R71AAqa0E', 'Bully Us devlog'),
+      },
+      {
+        title: 'Multiplayer & Art',
+        description:
+          'This was my first multiplayer game. I learnt the networking side from YouTube, mostly Tom Weiland’s tutorials. I made every asset from scratch in three weeks. The art style is a nod to Innersloth, because I was a big fan of their Henry Stickmin games.',
+        meta: [],
+        media: still('bully-us/art', 'The Bully Us lobby with several players in the school dorm'),
+      },
+      {
+        title: 'More Info',
+        description: 'The devlog goes through how it was made.',
+        meta: [],
+        media: youtube('44R71AAqa0E', 'Bully Us devlog'),
+      },
+    ],
+  },
+  {
     slug: 'star-ballz',
     name: 'Star Ballz',
-    slides: [todo('Star Ballz', ['Unity, Google Play, 2018'])],
+    slides: [
+      {
+        title: 'My First Game',
+        description:
+          'The first game I ever released, on the Google Play Store. I was 16 and still in school, and I’d only just started learning Unity. Making this game was how I learnt it.',
+        meta: ['Unity · C# · Android', 'Solo · 2018'],
+        media: youtube('N2rRCgfKkOg', 'Star Ballz trailer'),
+      },
+      {
+        title: 'The Game',
+        description:
+          'It’s a physics puzzle game. You draw lines, the ball rolls along them, and you have to get it to smash into the star to finish the level. There are a few game modes and some odd levels and mechanics mixed in.\n\nSince it was going on the Play Store, I also did the store side of things. It has ads for monetisation, and it’s hooked up to Google Play Games, so there are achievements you can unlock.',
+        meta: ['Physics puzzles · Multiple game modes', 'Ads · Google Play Games achievements'],
+        media: youtube('N2rRCgfKkOg', 'Star Ballz trailer'),
+      },
+    ],
   },
-  { slug: 'stick-exe', name: 'Stick.EXE', slides: [todo('Stick.EXE')] },
+  {
+    slug: 'monke-together-strong',
+    name: 'Monke Together Strong',
+    cover: cover('monke-together-strong', 'The monkeys working together through a jungle level'),
+    slides: [
+      {
+        title: 'The Game',
+        description:
+          'My entry for Brackeys Game Jam 2021. The theme was “Stronger Together”, and I kept thinking about monkeys, so it’s about monkeys.\n\nIt’s a 2D puzzle platformer with five monkeys, and each one has its own ability. None of them can finish a level alone, so you have to use them together to get through.',
+        meta: ['Unity · C# · 2D puzzle platformer · PC', 'Game jam · 5 days'],
+        media: clip(
+          'monke-together-strong/game',
+          'The monkeys working together through a jungle level',
+        ),
+        links: [PLAY_MONKE],
+      },
+      {
+        title: 'The Jam',
+        description:
+          'The jam lasted a week, but I missed the first two days, so I had five. It came out better than I expected. That’s how jams go: you push yourself, you don’t sleep much, and you learn a lot. (I might think twice before doing another one.)',
+        meta: [],
+        media: still('monke-together-strong/jam', 'The Monke Together Strong title screen'),
+      },
+      {
+        title: 'More Info',
+        description: 'The devlog covers the whole jam. You can play it on itch.io.',
+        meta: [],
+        media: youtube('7jGZLXDfrSs', 'Monke Together Strong devlog'),
+        links: [PLAY_MONKE],
+      },
+    ],
+  },
+  {
+    slug: 'endless-runner',
+    name: '2D Endless Runner',
+    cover: cover('endless-runner', 'A stickman runner vaulting and jumping over black platforms'),
+    slides: [
+      {
+        title: 'The Game',
+        description:
+          'A story-driven runner. You play as someone who’s a bit more than human, running and fighting your way across the world.',
+        meta: ['Unity · C# · Story runner', 'Solo · in development'],
+        media: clip(
+          'endless-runner/game',
+          'A stickman runner vaulting and jumping over black platforms',
+        ),
+      },
+      {
+        title: 'How It Plays',
+        description:
+          'It isn’t just running and dodging. You get parkour moves like vaults, slides and wall runs, and there are different enemy types and traps along the way, so every stretch plays a bit differently.',
+        meta: ['Parkour · Enemy types · Traps'],
+        media: youtube('jVF017WJEXM', '2D Endless Runner gameplay'),
+      },
+      {
+        title: 'More Info',
+        description: 'The devlogs show how it came together.',
+        meta: [],
+        media: youtubePlaylist(RUNNER_PLAYLIST, '2D Endless Runner devlogs', {
+          poster: asset('endless-runner/game/poster.jpg'),
+        }),
+      },
+    ],
+  },
   {
     slug: 'larrys-prophecy',
     name: "Larry's Prophecy",
@@ -520,7 +695,35 @@ export const projects: Project[] = [
       },
     ],
   },
-  { slug: 'prototypes', name: 'Prototypes', slides: [todo('Prototypes')] },
+  {
+    slug: 'mechanics',
+    name: 'Gameplay Mechanics',
+    cover: cover('mechanics', 'Red cubes flying back into place as time rewinds'),
+    slides: [
+      {
+        title: 'Time Manipulation',
+        description:
+          'I wanted time travel you can actually see happening, not just a new scene. So I built a system where everything around the player rewinds back in time while you watch. I made it as something to use in future games. The devlog shows how it works.',
+        meta: ['Unity · C#'],
+        media: clip(
+          'mechanics/time-manipulation',
+          'Red cubes flying back into place as time rewinds around the player',
+        ),
+        links: [devlog('iNM7rWTR-hY')],
+      },
+      {
+        title: 'Control Anyone',
+        description:
+          'One generic player controller that works on every character in the game. You aim at someone and you take them over, like a ghost possessing the people around it. I tried to make the switch as smooth as I could. The plan is to build a multiplayer game around it one day.',
+        meta: ['Unity · C#'],
+        media: clip(
+          'mechanics/control-anyone',
+          'Jumping from one character to another and taking control',
+        ),
+        links: [devlog('XYYF0bE3WGw')],
+      },
+    ],
+  },
   {
     slug: 'off-the-clock',
     name: 'Off the Clock',

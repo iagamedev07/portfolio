@@ -5,7 +5,15 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
-  globalIgnores(['dist/', 'legacy/', 'reference/', '.claude/', '.agents/', '.playwright*/']),
+  globalIgnores([
+    'dist/',
+    'legacy/',
+    'reference/',
+    'raw/',
+    '.claude/',
+    '.agents/',
+    '.playwright*/',
+  ]),
   js.configs.recommended,
   tseslint.configs.recommended,
   { languageOptions: { globals: globals.browser } },

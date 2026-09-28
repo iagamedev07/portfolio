@@ -19,15 +19,23 @@ export const sections: Section[] = [
   { id: 'experience', label: 'Experience', layout: 'viewer', projects: ['the-watch'] },
   {
     id: 'projects',
-    label: 'Projects',
+    label: 'Notable Projects',
     layout: 'field',
     projects: ['pixel-sandbox', 'dhaba-simulator', 'lattice', 'unreal-engine'],
   },
   {
     id: 'more-work',
-    label: 'More Work',
+    label: 'More Projects',
     layout: 'field',
-    projects: ['star-ballz', 'stick-exe', 'larrys-prophecy', 'prototypes'],
+    projects: [
+      'stick-exe',
+      'bully-us',
+      'star-ballz',
+      'monke-together-strong',
+      'endless-runner',
+      'larrys-prophecy',
+      'mechanics',
+    ],
   },
   { id: 'off-the-clock', label: 'Off the Clock', layout: 'viewer', projects: ['off-the-clock'] },
 ];

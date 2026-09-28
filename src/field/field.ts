@@ -92,7 +92,7 @@ export function mountField(stage: HTMLElement): Field {
     const root = document.createElement('div');
     root.className = 'field-scene';
     root.setAttribute('role', 'group');
-    root.setAttribute('aria-label', `${section.label} projects`);
+    root.setAttribute('aria-label', `${section.label} cards`);
 
     const label = stack(section.emblem ?? section.label);
     const emblem = document.createElement('p');
