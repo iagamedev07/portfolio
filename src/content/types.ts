@@ -16,6 +16,14 @@ export type Media =
 export interface SlideLink {
   label: string;
   href: string;
+  /** A logo before the label. */
+  icon?: 'steam' | 'epic' | 'youtube';
+}
+
+/** A big number (or name) with a small caption, e.g. "100K+" / "Epic Games Store installs". */
+export interface SlideStat {
+  value: string;
+  label: string;
 }
 
 export interface Slide {
@@ -23,7 +31,9 @@ export interface Slide {
   description: string;
   meta: string[];
   media: Media;
-  link?: SlideLink;
+  /** Buttons under the text, opening in a new tab. */
+  links?: SlideLink[];
+  stats?: SlideStat[];
 }
 
 export interface Project {

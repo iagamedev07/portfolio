@@ -32,6 +32,34 @@ export function youtube(id: string, title: string, options: YouTubeOptions = {})
   };
 }
 
+/**
+ * A YouTube playlist by id (the part after `list=`). `startVideo` is the video it opens on (e.g.
+ * the newest; YouTube can't pick that by itself) and gives the poster. Without it the playlist
+ * starts at its first video and needs a `poster` for a still.
+ */
+export function youtubePlaylist(
+  listId: string,
+  title: string,
+  options: EmbedOptions & { startVideo?: string } = {},
+): Media {
+  const params = new URLSearchParams({ list: listId, autoplay: '1', rel: '0', playsinline: '1' });
+  const video = options.startVideo ?? 'videoseries';
+  return {
+    kind: 'embed',
+    src: `https://www.youtube-nocookie.com/embed/${video}?${params.toString()}`,
+    title,
+    poster:
+      options.poster ??
+      (options.startVideo
+        ? `https://i.ytimg.com/vi/${options.startVideo}/hqdefault.jpg`
+        : undefined),
+    aspect: options.aspect,
+  };
+}
+
+/** A link to a YouTube video, for "Watch the devlog" style buttons. */
+export const youtubeUrl = (id: string): string => `https://www.youtube.com/watch?v=${id}`;
+
 /** A Vimeo video by id. Vimeo has no fixed thumbnail URL, so pass a `poster` for a still. */
 export function vimeo(id: string, title: string, options: EmbedOptions = {}): Media {
   return {

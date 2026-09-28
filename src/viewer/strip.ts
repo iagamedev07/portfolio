@@ -2,7 +2,7 @@ import { gsap } from 'gsap';
 import type { Project } from '../content';
 import { ease, prefersReducedMotion } from '../motion/tokens';
 import { drawDithered } from './dither';
-import { isTextOnly, pad, slideAspect, slideStill } from './media';
+import { isRemote, isTextOnly, pad, slideAspect, slideStill } from './media';
 
 // The filmstrip (docs/interactions.md 5.8): one thumbnail per slide of the open project,
 // bottom-aligned above the bar. Hover grows a cell 1.2x (its neighbours shift to make room)
@@ -78,7 +78,7 @@ export function createStrip(onSelect: (index: number) => void): Strip {
         if (still) {
           const img = document.createElement('img');
           // Embed posters come from other sites; CORS lets the hover dither read their pixels.
-          if (/^https?:/.test(still)) img.crossOrigin = 'anonymous';
+          if (isRemote(still)) img.crossOrigin = 'anonymous';
           img.src = still;
           img.alt = '';
           img.draggable = false;

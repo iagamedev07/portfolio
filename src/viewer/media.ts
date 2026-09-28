@@ -85,6 +85,8 @@ function embedElement(media: EmbedMedia, still: string | null): HTMLElement {
   wrap.className = 'viewer-embed';
   if (still) {
     const img = document.createElement('img');
+    // Same CORS mode as the sweep and filmstrip, so the browser can share one cached copy.
+    if (isRemote(still)) img.crossOrigin = 'anonymous';
     img.src = still;
     img.alt = '';
     img.decoding = 'async';
@@ -119,6 +121,7 @@ function embedElement(media: EmbedMedia, still: string | null): HTMLElement {
 export function loadImage(src: string): Promise<HTMLImageElement> {
   const img = new Image();
   img.decoding = 'async';
+  if (isRemote(src)) img.crossOrigin = 'anonymous'; // the sweep reads its pixels
   img.src = src;
   return img.decode().then(
     () => img,
@@ -228,6 +231,9 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): st
   if (line) lines.push(line);
   return lines;
 }
+
+/** A poster from another site (embed thumbnails), as opposed to our own files and generated art. */
+export const isRemote = (src: string): boolean => /^https?:/.test(src);
 
 export function pad(n: number): string {
   return String(n).padStart(2, '0');

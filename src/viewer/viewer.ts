@@ -6,7 +6,16 @@ import { scrambleText } from '../motion/scramble';
 import { ease, MOBILE_QUERY, prefersReducedMotion } from '../motion/tokens';
 import { formatRoute, navigate, onRouteChange, type Route } from '../router';
 import type { Shell } from '../shell/shell';
-import { isTextOnly, loadImage, mediaElement, pad, slideAspect, slideStill } from './media';
+import { iconSvg } from './icons';
+import {
+  isRemote,
+  isTextOnly,
+  loadImage,
+  mediaElement,
+  pad,
+  slideAspect,
+  slideStill,
+} from './media';
 import { createStrip } from './strip';
 import { sweepReveal } from './sweep';
 import './viewer.css';
@@ -59,6 +68,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
         <p class="viewer-label"><span class="viewer-project" translate="no"></span><span class="viewer-count"></span></p>
         <h2 class="viewer-title display" tabindex="-1"></h2>
         <p class="viewer-desc"></p>
+        <dl class="viewer-stats"></dl>
         <div class="viewer-meta"></div>
         <div class="viewer-actions"></div>
       </div>
@@ -90,6 +100,7 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
   const count = $('.viewer-count');
   const title = $('.viewer-title');
   const desc = $('.viewer-desc');
+  const stats = $('.viewer-stats');
   const meta = $('.viewer-meta');
   const actions = $('.viewer-actions');
   const closeButton = $('.viewer-close');
@@ -123,7 +134,9 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     shot.replaceChildren(...(element ? [element] : []));
     // The offset card behind is the next slide, like a stack of prints.
     const behind = slideStill(p, (i + 1) % p.slides.length);
-    back.innerHTML = behind ? `<img src="${behind}" alt="" draggable="false" />` : '';
+    back.innerHTML = behind
+      ? `<img src="${behind}" alt="" draggable="false"${isRemote(behind) ? ' crossorigin="anonymous"' : ''} />`
+      : '';
   };
 
   const fillText = (p: Project, i: number) => {
@@ -136,12 +149,17 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
       ? `<span class="viewer-rule"></span>${s.meta.map((line) => `<p>${escapeHtml(line)}</p>`).join('')}`
       : '';
 
-    const buttons: string[] = [];
-    if (s.link) {
-      buttons.push(
-        `<a class="viewer-button display" href="${escapeHtml(s.link.href)}" target="_blank" rel="noopener" data-cursor="small">${escapeHtml(s.link.label)}<span class="visually-hidden"> (opens in a new tab)</span></a>`,
-      );
-    }
+    stats.innerHTML = (s.stats ?? [])
+      .map(
+        (stat) =>
+          `<div class="viewer-stat"><dt class="display">${escapeHtml(stat.value)}</dt><dd>${escapeHtml(stat.label)}</dd></div>`,
+      )
+      .join('');
+
+    const buttons = (s.links ?? []).map(
+      (link) =>
+        `<a class="viewer-button display" href="${escapeHtml(link.href)}" target="_blank" rel="noopener" data-cursor="small">${iconSvg(link.icon)}${escapeHtml(link.label)}<span class="visually-hidden"> (opens in a new tab)</span></a>`,
+    );
     const next = i === p.slides.length - 1 ? nextProject(section, p.slug) : undefined;
     const nextName = next ? getProject(next.slug)?.name : undefined;
     if (next && nextName) {
@@ -258,9 +276,13 @@ export function mountViewer(app: HTMLElement, deps: ViewerDeps): void {
     if (!plain && still) {
       media.style.setProperty('--aspect', String(slideAspect(p.slides[i])));
       placeArrows();
-      const image = await loadImage(still);
-      sweepCanvas.classList.add('is-active');
-      await sweepReveal(sweepCanvas, image, sweepOptions());
+      try {
+        const image = await loadImage(still);
+        sweepCanvas.classList.add('is-active');
+        await sweepReveal(sweepCanvas, image, sweepOptions());
+      } catch {
+        // A poster from a site that won't let us read its pixels: skip the sweep.
+      }
       setMedia(p, i);
       sweepCanvas.classList.remove('is-active');
     } else {
