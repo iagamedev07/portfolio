@@ -102,8 +102,6 @@ function withSoundToggle(video: HTMLVideoElement, sound: SoundState): HTMLElemen
   const show = () => {
     video.muted = !sound.on;
     wrap.classList.toggle('is-on', sound.on);
-    button.setAttribute('aria-pressed', String(sound.on));
-    button.setAttribute('aria-label', 'Sound');
     button.innerHTML = `${SPEAKER}<span>${sound.on ? 'Sound off' : 'Sound on'}</span>`;
   };
   // The frame's own click steps slides, so the button's click stops here.

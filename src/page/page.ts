@@ -75,9 +75,9 @@ export function mountPages(app: HTMLElement, deps: { shell: Shell }): void {
             (link) =>
               `<li>${escapeHtml(link.label)}: <a href="${escapeHtml(link.href)}"${
                 link.external ? ' target="_blank" rel="noopener"' : ''
-              } data-cursor="small">${escapeHtml(link.text)}</a>${
+              } data-cursor="small">${escapeHtml(link.text)}${
                 link.external ? '<span class="visually-hidden"> (opens in a new tab)</span>' : ''
-              }</li>`,
+              }</a></li>`,
           )
           .join('')}</ul>`
       : '';

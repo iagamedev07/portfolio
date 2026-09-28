@@ -80,7 +80,7 @@ export const projects: Project[] = [
       {
         title: 'THE WATCH',
         description:
-          "It started as a competitive Action-RTS in Early Access on the Epic Games Store, and it's now being rebuilt as a single-player deck-builder where you place cards onto a grid.\n\nI've worked on it as a Unity developer since December 2023, mostly on UI and gameplay systems.",
+          'It started as a competitive Action-RTS in Early Access on the Epic Games Store, and it’s now being rebuilt as a single-player deck-builder where you place cards onto a grid.\n\nI’ve worked on it as a Unity developer since December 2023, mostly on UI and gameplay systems.',
         meta: [
           'Unity · C#',
           'Role: Unity Developer, UI',
@@ -131,7 +131,7 @@ export const projects: Project[] = [
       {
         title: 'Gameplay systems',
         description:
-          "Outside UI I build the systems the game runs on: attributes, progression and the card gameplay flow, along with units, weapon behaviours, state machines and projectiles.\n\nIn the Early Access version that gameplay also ran inside Photon Quantum's deterministic multiplayer simulation.",
+          'Outside UI I build the systems the game runs on: attributes, progression and the card gameplay flow, along with units, weapon behaviours, state machines and projectiles.\n\nIn the Early Access version that gameplay also ran inside Photon Quantum’s deterministic multiplayer simulation.',
         meta: [
           'Attributes · Progression · Card gameplay flow',
           'Units · Weapons · State machines · Projectiles',
@@ -142,7 +142,7 @@ export const projects: Project[] = [
       {
         title: 'The redesign',
         description:
-          "THE WATCH is now a single-player deck-builder: you build a deck and place your cards onto a grid. It's heading for Steam.\n\nI can't show it yet, but it's what I work on every day: the card systems, placing units on the grid, the gameplay underneath and the UI around it.",
+          'THE WATCH is now a single-player deck-builder: you build a deck and place your cards onto a grid. It’s heading for Steam.\n\nI can’t show it yet, but it’s what I work on every day: the card systems, placing units on the grid, the gameplay underneath and the UI around it.',
         meta: [
           'Card systems → Grid unit placement → Gameplay systems → Supporting UI',
           'Coming to Steam',
@@ -190,7 +190,7 @@ export const projects: Project[] = [
       {
         title: 'An endless world',
         description:
-          "I don't hand-place the map. Perlin noise, a smooth random pattern, becomes the terrain: high values turn into cliffs and hills, low ones into flat ground.\n\nThe world is split into chunks that generate as you walk, and where a new chunk meets an old one the edges are stitched, so there's no seam.",
+          'I don’t hand-place the map. Perlin noise, a smooth random pattern, becomes the terrain: high values turn into cliffs and hills, low ones into flat ground.\n\nThe world is split into chunks that generate as you walk, and where a new chunk meets an old one the edges are stitched, so there’s no seam.',
         meta: ['Perlin noise · Chunking · Seamless stitching'],
         media: clip(
           'pixel-sandbox/world',
@@ -245,7 +245,7 @@ export const projects: Project[] = [
       {
         title: 'The devlogs',
         description:
-          "I've documented this one on YouTube as I built it. If you want the long version of any of these systems, start here.",
+          'I’ve documented this one on YouTube as I built it. If you want the long version of any of these systems, start here.',
         meta: [],
         // Opens on the newest devlog; update startVideo when a new one goes up.
         media: youtubePlaylist(PIXEL_PLAYLIST, 'Pixel Sandbox Survival devlogs', {
@@ -647,7 +647,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'larrys-prophecy',
-    name: "Larry's Prophecy",
+    name: 'Larry’s Prophecy',
     cover: cover(
       'larrys-prophecy',
       'Larry running through a torch-lit dungeon as a Mementor closes in',
@@ -691,7 +691,7 @@ export const projects: Project[] = [
         description:
           'The devlog shows the whole game and how I made it. You can also play it on itch.io.',
         meta: [],
-        media: youtube('Xtd3IvLmQ74', "Larry's Prophecy devlog"),
+        media: youtube('Xtd3IvLmQ74', 'Larry’s Prophecy devlog'),
         links: [PLAY_LARRY],
       },
     ],
