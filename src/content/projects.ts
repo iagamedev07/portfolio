@@ -19,11 +19,12 @@ const clip = (folder: string, alt: string, { audio = false, aspect = 16 / 9 } = 
 // Card cover: the loop that plays on the ring (npm run media -- <clip> <slug>/cover --width 640).
 const cover = (slug: string, alt: string): Media => clip(`${slug}/cover`, alt);
 
-const todo = (title: string, meta: string[] = []): Slide => ({
+// One Off the Clock slide: a single YouTube video with a short line about it.
+const piece = (title: string, id: string, kind: string, description: string): Slide => ({
   title,
-  description: 'Placeholder. Real copy comes in Phase 5.',
-  meta,
-  media: { kind: 'placeholder' },
+  description,
+  meta: [kind],
+  media: youtube(id, title),
 });
 
 // A still image converted by `npm run media` (1280x720 webp).
@@ -731,6 +732,73 @@ export const projects: Project[] = [
       'off-the-clock',
       'A stickman animation running and tumbling around the Unity editor',
     ),
-    slides: [todo('Animation'), todo('Editing'), todo('Motion graphics'), todo('Music')],
+    slides: [
+      piece(
+        'Game Dev vs Stickman',
+        'VJKVjeoOIvM',
+        'Animation',
+        'A game dev fighting a stickman that’s got loose inside Unity. It’s my take on Alan Becker’s Animation vs. Animator, and it’s the video that ended up turning into Stick.EXE.',
+      ),
+      piece(
+        '67 Game Dev Tips',
+        '_34TsHdcKqg',
+        'Video',
+        'Stuff I learnt the hard way over years of making games, all in one video so you don’t have to learn it the same way.',
+      ),
+      piece(
+        'Why Jumping Feels So Good',
+        'gJzA0rGWPuA',
+        'Video essay',
+        'You jump more than you do almost anything else in a lot of games, so it has to feel good. This one’s about what goes into making a jump feel right.',
+      ),
+      piece(
+        'How People Think Games Are Made',
+        'y1Lgae19q4k',
+        'Animation',
+        'A short animation about what people imagine making games looks like, and what it’s actually like.',
+      ),
+      piece(
+        'Why We Love Doing Boring Jobs',
+        '1FmNKpAp-Xw',
+        'Video essay',
+        'Farming, cooking, delivering stuff. Jobs we’d never want in real life, but we’ll happily do them for hours in a game. This one’s about why.',
+      ),
+      piece(
+        'Why Moving Right Feels Right',
+        'bpXJuyxQsFo',
+        'Video essay',
+        'In almost every side-scroller you head from left to right. I look at where that comes from and why it just feels natural.',
+      ),
+      piece(
+        'The Sound of Silence',
+        'dM2_FWta2hc',
+        'Video essay',
+        'About the quiet moments in games, and how much they can do when the music and noise drop away.',
+      ),
+      piece(
+        'Making Music in FL Studio',
+        'dHK_MszbL98',
+        'Music · FL Studio',
+        'How I made the theme music for Star Ballz, my first game, in FL Studio.',
+      ),
+      piece(
+        'LATTICE OST',
+        '1MyziwwPkHA',
+        'Music',
+        'The soundtrack I made for Project LATTICE. Slow, calm music to build to.',
+      ),
+      piece(
+        'Epic Boss Theme',
+        'QfQO4plVDmo',
+        'Music',
+        'The main boss theme for my 2D endless runner. I actually made the music before the game even had a boss.',
+      ),
+      piece(
+        'How Long It Took Me to Learn Unity',
+        'IIty5c4VV8g',
+        'Animation',
+        'A short animated look back at how long it really took me to get the hang of Unity.',
+      ),
+    ],
   },
 ];
