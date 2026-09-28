@@ -7,7 +7,7 @@ export function renderCard(project: Project, href: string): HTMLAnchorElement {
   card.href = href;
   card.draggable = false;
   card.dataset.cursor = 'word';
-  card.dataset.cursorWords = 'Drag,Click';
+  card.dataset.cursorWords = 'Click';
   card.setAttribute('aria-label', project.name);
 
   const media: Media = project.cover ?? project.slides[0]?.media ?? { kind: 'none' };

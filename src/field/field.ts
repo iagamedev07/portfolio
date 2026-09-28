@@ -125,8 +125,7 @@ export function mountField(stage: HTMLElement): Field {
     const touch = window.matchMedia('(hover: none)').matches;
     root.insertAdjacentHTML(
       'beforeend',
-      `<p class="field-hint is-left" aria-hidden="true">Scroll or drag to spin</p>
-       <p class="field-hint is-right" aria-hidden="true">${touch ? 'Tap' : 'Click'} a project to open it</p>`,
+      `<p class="field-hint is-right" aria-hidden="true">${touch ? 'Tap' : 'Click'} a project to open it</p>`,
     );
 
     return {

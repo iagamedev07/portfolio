@@ -86,19 +86,11 @@
   pointer-events: none;
 }
 
-.field-hint.is-left {
-  left: var(--gutter);
-}
-
 .field-hint.is-right {
   right: var(--gutter);
 }
 
 @media (max-width: 820px) {
-  .field-hint.is-left {
-    display: none;
-  }
-
   .field-hint.is-right {
     right: auto;
     bottom: var(--space-4);
